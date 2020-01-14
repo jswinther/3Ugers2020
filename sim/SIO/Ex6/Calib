@@ -1,0 +1,9 @@
+a=0
+log "a" "$lineraw0"
+label "start"
+ignoreobstacles
+fwd 0.1
+a=1
+wait 1
+a=0
+if ($irdistfrontmiddle>0.15) "start"

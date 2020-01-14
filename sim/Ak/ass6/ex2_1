@@ -1,0 +1,9 @@
+%Calibration ex 
+a = 1
+log "a" "$lineraw0"
+wait 1
+a = 0
+fwd 0.3
+a = 1
+wait 1
+

@@ -1,0 +1,3 @@
+log "$blacklinefound"
+fwd 0.3
+log "$blacklinefound"

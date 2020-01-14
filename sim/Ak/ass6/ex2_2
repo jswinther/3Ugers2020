@@ -1,0 +1,12 @@
+% Ex 2.2
+
+a = 1
+log "a" "$irdistfrontmiddle"
+label "start"
+a=1
+wait 1
+a=0
+fwd 0.1
+ignoreobstacles
+if ($irdistfrontmiddle > 0.15) "start"
+

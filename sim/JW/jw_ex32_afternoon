@@ -1,0 +1,13 @@
+turn -180
+fwd 3
+turn -90
+fwd 3
+turn -90
+fwd 3
+turn -90
+fwd 3
+turn -90
+
+
+% 0 2 0
+% 0.627 2.408 cw

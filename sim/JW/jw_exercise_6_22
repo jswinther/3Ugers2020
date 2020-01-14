@@ -1,0 +1,10 @@
+% Calibration of IR-distance sensors
+a = 1
+log "a" "$irdistfrontleft" "$irfl" "$irdistfrontmiddle" "$irfm" "$irdistfrontright" "$irfr"
+label "start"
+a = 1
+wait 1
+a = 0
+ignoreobstacles
+fwd 0.1
+if($irdistfrontmiddle >= 0.15) "start"

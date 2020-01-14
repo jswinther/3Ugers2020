@@ -1,0 +1,11 @@
+turn -90
+fwd 3
+turn 90
+fwd 3
+turn 90
+fwd 3
+turn 90
+fwd 3
+
+% x 0.33
+% y 0.09

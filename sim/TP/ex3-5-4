@@ -1,0 +1,2 @@
+fwd 0.5
+followline "bm" @v 0.5 :($drivendist > 1)
