@@ -1,0 +1,5 @@
+laser "scanpush cmd='zoneobst'"
+fwd 1 @v0.3
+
+log "$irl" "$irfl" "$irfm" "$irfr" "$irr"
+wait 0.1
