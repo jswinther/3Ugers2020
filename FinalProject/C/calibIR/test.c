@@ -6,29 +6,30 @@
 #define ROBOTPORT	8000 //24902
 
 int main()
-{    
+{
     // Connection.
     
     // **************************************************
     //  Establish connection to robot sensors and actuators
     // **************************************************
     int running,arg,time=0;
+
     if (rhdConnect('w',"localhost",ROBOTPORT)!='w')
     {
         printf("Can't connlect to rhd \n");
         exit(EXIT_FAILURE); 
-    }    
+    } 
         
-    printf("connected to robot \n");    
+    printf("connected to robot \n");
 
     if ((inputtable=getSymbolTable('r'))== NULL)
     {
-        printf("Can't connect to rhd \n"); 
+        printf("Can't connect to rhd \n");
         exit(EXIT_FAILURE); 
-    } 
+    }
         
     if ((outputtable=getSymbolTable('w'))== NULL)
-    { 
+    {
         printf("Can't connect to rhd \n");
         exit(EXIT_FAILURE); 
     }

@@ -2,11 +2,13 @@
  * An example SMR program.
  */
 
-#include "include_all.h"
+#include "include_all.h"  
 #define ROBOTPORT	8000 //24902
 
 int main()
-{    
+{     
+
+    int State = ms_obs1; 
     // Connection.
     
     // **************************************************
@@ -67,27 +69,27 @@ int main()
         {
             perror(strerror(errno));
             fprintf(stderr," Can not make  socket\n");
-            exit(errno);
+            exit(errno); 
         }
 
         serverconnect(&camsrv);
-
-        xmldata=xml_in_init(4096,32);
+ 
+        xmldata=xml_in_init(4096,32); 
         printf(" camera server xml initialized \n");
     }   
     
     // **************************************************
     //  LMS server code initialization
     //
-    
-    
-
+       
+       
+  
 
     /* Create endpoint */
     lmssrv.config=1;
-    if (lmssrv.config) 
-    {
-        char buf[256];
+    if (lmssrv.config)  
+    { 
+        char buf[256]; 
         int errno = 0,len; 
         lmssrv.sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if ( lmssrv.sockfd < 0 )
@@ -95,7 +97,7 @@ int main()
             perror(strerror(errno));
             fprintf(stderr," Can not make  socket\n");
             exit(errno);
-        }
+        }  
 
         serverconnect(&lmssrv);
         if (lmssrv.connected){
@@ -117,11 +119,11 @@ int main()
     reset_odo(&odo);
     printf("position: %f, %f\n", odo.left_pos, odo.right_pos);
     mot.w=odo.w;
-    running=1; 
-    mission.state=ms_obs1;
-    mission.oldstate=-1; 
-    
-    
+    running=1;   
+    mission.state=ms_obs1; 
+    mission.oldstate=-1;    
+           
+                   
     /**********************************************************************************
      *                                 MAIN LOOP START
      **********************************************************************************/
@@ -132,54 +134,33 @@ int main()
             while ( (xml_in_fd(xmllaser,lmssrv.sockfd) >0))
                 xml_proca(xmllaser);
         }
-        
+         
         if (camsrv.config && camsrv.status && camsrv.connected)
-        {
-            while ( (xml_in_fd(xmldata,camsrv.sockfd) >0))
+        {  
+            while ( (xml_in_fd(xmldata,camsrv.sockfd) >0)) 
                 xml_proc(xmldata);
-        }
-        
-        rhdSync();
-        odo.left_enc=lenc->data[0];
+        }  
+            
+        rhdSync();  
+        odo.left_enc=lenc->data[0]; 
         odo.right_enc=renc->data[0];
         update_odo(&odo);
         
         /****************************************
-        / mission statemachine   
-        */
-        sm_update(&mission);
-        switch (mission.state) {
-            case ms_obs1:
-                if(run_obstacle_1() == 1) mission.state = ms_obs2;
-                printf("Obs %d\n", mission.state);
-                break;
-            case ms_obs2:
-                if(run_obstacle_2() == 1) mission.state = ms_obs3;
-                printf("Obs %d\n", mission.state);
-                break;
-            case ms_obs3:
-                if(run_obstacle_3() == 1) mission.state = ms_obs4;
-                printf("Obs %d\n", mission.state);
-                break;
-            case ms_obs4:
-                if(run_obstacle_4() == 1) mission.state = ms_obs5;
-                printf("Obs %d\n", mission.state);
-                break;
-            case ms_obs5:
-                if(run_obstacle_5() == 1) mission.state = ms_obs6;
-                printf("Obs %d\n", mission.state);
-                break;
-            case ms_obs6:
-                if(run_obstacle_6() == 1) mission.state = ms_end;
-                printf("Obs %d\n", mission.state);
-                break;                
-            case ms_end:
-                mot.cmd=mot_stop;
-                running=0;
-                break;
-        }  
-        /*  end of mission  */
-        
+        / mission statemachine       
+        */  
+        switch (State) {
+            case ms_obs1:   
+                if(IRcalibration() == 1) State = ms_end;
+                break; 
+                           
+            case ms_end:  
+                mot.cmd=mot_stop;  
+                running=0;   
+                break;  
+        }         
+        /*  end of mission  */       
+          
         mot.left_pos=odo.left_pos;
         mot.right_pos=odo.right_pos;
         update_motcon(&mot);
@@ -194,20 +175,20 @@ int main()
         time++;
         /* stop if keyboard is activated
         *
-        */
-        ioctl(0, FIONREAD, &arg);
-        if (arg!=0)  running=0;
+        */  
+        ioctl(0, FIONREAD, &arg); 
+        if (arg!=0)  running=0; 
     }
     /**********************************************************************************
-     *                                 MAIN LOOP END
+     *                                 MAIN LOOP END 
      **********************************************************************************/
-
-    // Finished Mission    
-    speedl->data[0]=0;
-    speedl->updated=1;
+ 
+    // Finished Mission       
+    speedl->data[0]=0; 
+    speedl->updated=1; 
     speedr->data[0]=0;
-    speedr->updated=1;
-    rhdSync();
+    speedr->updated=1;   
+    rhdSync(); 
     rhdDisconnect();
-    exit(0);
-}
+    exit(0); 
+} 
