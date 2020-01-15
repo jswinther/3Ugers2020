@@ -1,6 +1,15 @@
 laser "scanpush cmd='zoneobst'"
-fwd 1 @v0.3
-log "$l1" "$l2" "$l3" "$l4" "$l5" "$l6" "$l7" "$l8"
-log "$odox" "$odoy"
-wait 0.1
-stringcat "l1=" $l1 "l2=" $l2 "l3=" $l3 "l4=" $l4 "l5=" $l5 "l6=" $l6 "l7=" $l7 "l8=" $l8
+startx = $odox
+starty = $odoy
+turn 90
+fwd 0.1
+turn -90
+fwd 0.5
+followline "bm" :(0)
+wait 1
+endx = $odox + $l4
+endy = $odoy
+res = sqrt(endx*endx+endy*endy)
+stringcat res
+stringcat startx starty endx endy $l4
+stringcat "l0=" $l0 "l1=" $l1 "l2=" $l2 "l3=" $l3 "l4=" $l4 "l5=" $l5 "l6=" $l6 "l7=" $l7 "l8=" $l8
