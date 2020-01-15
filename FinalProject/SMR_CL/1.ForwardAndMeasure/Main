@@ -1,5 +1,5 @@
 laser "scanpush cmd='zoneobst'"
-fwd -0.3 @v0.3
+fwd 1 @v0.3
 log "$l1" "$l2" "$l3" "$l4" "$l5" "$l6" "$l7" "$l8"
 log "$odox" "$odoy"
 wait 0.1
