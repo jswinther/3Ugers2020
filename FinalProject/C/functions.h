@@ -192,6 +192,20 @@ void sm_update(smtype *p)
 
 int followline(char type)
 {
+    if (type == 'm')
+    {
+
+    }
+    else if (tyoe == 'r')
+    {
+        /* code */
+    }
+    else if (type == 'l')
+    {
+        /* code */
+    }
+    
+    
     printf("Not yet implemented followline");
     return 1;
 }

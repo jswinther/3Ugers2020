@@ -11,40 +11,69 @@ enum {
 };
 
 int obs1 = obs1_fwd;
-/**
- * Prototypes
- **/
+
+/**************\
+ * Prototypes *
+\**************/
 int run_obstacle_1();
 double raw2real(double raw);
 int laserparLength = (sizeof(laserpar)/sizeof(double))-1;
 int obs1_n = 4;
-/**
- * Functions
- **/
+int obs1_initFlag=0;
+
+/*************\
+ * Functions *
+\*************/
 int run_obstacle_1() {
+
+    if(!obs1_initFlag)
+    {
+        mission.state=obs1_fwd;
+        mission.oldstate=-1;
+        obs1_initFlag = 1;
+    }
     int finished = 0;
-    switch(obs1) {
+    sm_update(&mission); 
+    printf("\nMission state: %d",mission.state);
+    printf("\nMission time: %d",mission.time);
+    switch(mission.state) 
+    {
         case obs1_fwd:
-            if(fwd(0.80,0.3,mission.time)) {
-                obs1 = obs1_measure;
+            if(fwd(0.80,0.3,mission.time)) 
+            {
+                mission.state = obs1_measure;
             }
 	        break;
 
         case obs1_measure:
-            for(int i = 0; i < laserparLength; i++) {
-                printf("\nIR Sensor [%d] = %f  /  %f", i, laserpar[i],raw2real(laserpar[i]));
-		        if(obs1_n > 0) {
-                    obs1 = obs1_turn;
+            if(mission.time % 22 == 0)
+            {
+                for(int i = 0; i < laserparLength; i++) 
+                {
+                    printf("\nIR Sensor [%d] = %f", i, laserpar[i]);
+                }
+                
+                if(obs1_n > 0) 
+                {
+                    printf("\nn: %d",obs1_n);
+                    mission.state = obs1_turn;
                     obs1_n--;
                 }
-                else obs1 = obs1_end;
+                else 
+                {
+                    printf("\nDONE! n is: %d",obs1_n);
+                    mission.state = obs1_end;
+                }
+                
             }
             break;
         
         case obs1_turn:
-            if(turn(1.57, 0.3, mission.time)) {
+
+            if(turn(1.57, 0.3, mission.time)) 
+            {
                 printf("\nturn");
-                obs1 = obs1_fwd;
+                mission.state = obs1_fwd;
             }
             break;
 
@@ -53,12 +82,5 @@ int run_obstacle_1() {
 	        break;
     }
     return finished;
-}
-
-double raw2real(double raw) {
-    if(raw == 1000)
-        return -1;
-    else
-        return 16/(raw - 76);
 }
 

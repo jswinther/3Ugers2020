@@ -118,8 +118,7 @@ int main()
     printf("position: %f, %f\n", odo.left_pos, odo.right_pos);
     mot.w=odo.w;
     running=1; 
-    mission.state=ms_obs1;
-    mission.oldstate=-1; 
+    int statemachine=ms_obs1;
     
     
     /**********************************************************************************
@@ -144,41 +143,41 @@ int main()
         odo.right_enc=renc->data[0];
         update_odo(&odo);
         
-        /****************************************
-        / mission statemachine   
-        */
-        sm_update(&mission);
-        switch (mission.state) {
+        /****************************************\
+                      statemachine           
+        \****************************************/  
+
+        switch (statemachine) {
             case ms_obs1:
-                if(run_obstacle_1() == 1) mission.state = ms_obs2;
-                printf("Obs %d\n", mission.state);
+                if(run_obstacle_1() == 1) statemachine = ms_obs2; 
+                printf("Obs %d\n", statemachine+1); // the first case is 0, but we call it obs_1, so -> +1
                 break;
             case ms_obs2:
-                if(run_obstacle_2() == 1) mission.state = ms_obs3;
-                printf("Obs %d\n", mission.state);
+                if(run_obstacle_2() == 1) statemachine = ms_obs3;
+                printf("Obs %d\n", statemachine+1);
                 break;
             case ms_obs3:
-                if(run_obstacle_3() == 1) mission.state = ms_obs4;
-                printf("Obs %d\n", mission.state);
+                if(run_obstacle_3() == 1) statemachine = ms_obs4;
+                printf("Obs %d\n", statemachine+1);
                 break;
             case ms_obs4:
-                if(run_obstacle_4() == 1) mission.state = ms_obs5;
-                printf("Obs %d\n", mission.state);
+                if(run_obstacle_4() == 1) statemachine = ms_obs5;
+                printf("Obs %d\n", statemachine+1);
                 break;
             case ms_obs5:
-                if(run_obstacle_5() == 1) mission.state = ms_obs6;
-                printf("Obs %d\n", mission.state);
+                if(run_obstacle_5() == 1) statemachine = ms_obs6;
+                printf("Obs %d\n", statemachine+1);
                 break;
             case ms_obs6:
-                if(run_obstacle_6() == 1) mission.state = ms_end;
-                printf("Obs %d\n", mission.state);
+                if(run_obstacle_6() == 1) statemachine = ms_end;
+                printf("Obs %d\n", statemachine+1);
                 break;                
             case ms_end:
                 mot.cmd=mot_stop;
                 running=0;
                 break;
         }  
-        /*  end of mission  */
+        /*  end of mission  */ 
         
         mot.left_pos=odo.left_pos;
         mot.right_pos=odo.right_pos;

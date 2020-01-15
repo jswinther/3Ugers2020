@@ -157,12 +157,12 @@ int main()
             case ms_end:  
                 mot.cmd=mot_stop;  
                 running=0;   
-                break;  
+                break;   
         }         
         /*  end of mission  */       
-          
+           
         mot.left_pos=odo.left_pos;
-        mot.right_pos=odo.right_pos;
+        mot.right_pos=odo.right_pos; 
         update_motcon(&mot);
         speedl->data[0]=100*mot.motorspeed_l;
         speedl->updated=1;
@@ -171,13 +171,13 @@ int main()
 
         // 100 Hz clock, which means this is true once every 1 second.
         if (time  % 100 == 0)
-        //    printf(" laser %f \n",laserpar[3]);
+        //    printf(" laser %f \n",laserpar[3]); 
         time++;
         /* stop if keyboard is activated
         *
-        */  
+        */    
         ioctl(0, FIONREAD, &arg); 
-        if (arg!=0)  running=0; 
+        if (arg!=0)  running=0;  
     }
     /**********************************************************************************
      *                                 MAIN LOOP END 

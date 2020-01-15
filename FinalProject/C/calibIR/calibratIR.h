@@ -51,7 +51,7 @@ int IRcalibration() {
            // printf("\nmodulus: %d", mission.time % 17);
             if(mission.time % 22 == 0)
             {
-                printf("\nIRMeasure");
+                printf("\nIRMeasure: %d",measurecount);
 
             // printf("\nGO - case 1");
                 if (measurecount == 1)
@@ -60,7 +60,7 @@ int IRcalibration() {
                 //   printf("\ngot to fwd");
                     measurecount = 100;
                     mission.state = IRc_fwd;
-                    laserparCal[IRc_n-1] = laserparCal[IRc_n-1]/99;
+                    laserparCal[IRc_n-1] = laserparCal[IRc_n-1]/(measurecount-1);
                     IRc_n--;
 
                 }
@@ -85,8 +85,9 @@ int IRcalibration() {
 
         case IRc_fwd:
            // printf("\nGO - case 2");
+           
             if(fwd(0.1,0.3,mission.time)) {
-        //        printf("\n                number of runs: %d",IRc_n);
+                printf("\n\nRuns left: %d\n",IRc_n);
                 mission.state = IRc_IRmeasure;
                 
                 
