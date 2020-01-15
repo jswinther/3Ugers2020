@@ -1,0 +1,14 @@
+laser "scanpush cmd='zoneobst'"
+startx = $odox
+starty = $odoy
+turn 90
+fwd 0.1
+turn -90
+fwd 0.5
+% End condition
+followline "bm" :($odoth < -1.50)
+wait 1
+endx = $odox + $l4
+endy = $odoy
+res = sqrt(endx*endx+endy*endy)
+stringcat "Distance from start to the box is = " res
