@@ -1,0 +1,9 @@
+
+followline "bl" :($crossingblackline==1)
+wait 1
+ignoreobstacles
+followline "bm" :($crossingblackline==1)
+wait 1
+followline "bm" :($drivendist==0.1175)
+fwd -0.2
+followline "bm" :($crossingblackline==1)

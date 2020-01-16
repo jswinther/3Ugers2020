@@ -1,0 +1,10 @@
+
+dc = 2
+label "doublecross"
+ignoreobstacles
+followline "bl" :($crossingblackline)
+dc = dc-1
+ignoreobstacles
+drive :($drivendist > 0.2)
+if (dc != 0)  "doublecross"
+fwd -1
