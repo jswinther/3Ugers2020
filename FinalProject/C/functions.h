@@ -23,7 +23,7 @@ int drive(double speed);
 int turnr(double radius, double degrees);
 int stop();
 int idle();
-int followline(double speed, int time, char type);
+int followline(double speed, char type);
 int followwall(char side, double dist);
 int resetmotors();
 int ignoreobstacles();
@@ -213,14 +213,29 @@ void sm_update(smtype *p)
  * \param type is 'l' for left tracking, 'm' for middle tracking, 'r' for right tracking.
  * \return returns 1 if there is a blackline returns 0 when there is no more blackline.
  **/
-int followline(double speed, int time, char type)
+int followline(double speed, char type)
 {
         double xl = 0;
         double l = 0;
         double sensor_offset[] = {-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5};
+        double offset = 0;
+        switch(type) 
+        {
+        case 'l':
+            offset = 2;    
+            break;
+        case 'm':
+            offset = 0;
+            break;
+        case 'r':
+            offset = -2;
+            break;
+        }
+
+        
         for (int i = 0; i < linesensor->length; i++)
         {
-            xl += (1 - linesensor->data[i]/128) * sensor_offset[i];
+            xl += (1 - linesensor->data[i]/128) * (sensor_offset[i] + offset);
         }
 
         for (int i = 0; i < linesensor->length; i++)
@@ -229,24 +244,28 @@ int followline(double speed, int time, char type)
         }
 
         if(l == 0) {
-            // Can't divide by zero, which means there is no more black line.
-            mot.motorspeed_l = 0;
-            mot.motorspeed_r = 0;
-            return mot.finished;
+            switch(type) {
+                case 'm':
+                    mot.motorspeed_l = 0;
+                    mot.motorspeed_r = 0;
+                    break;
+                case 'l':
+                    mot.motorspeed_l = speed;
+                    mot.motorspeed_r = 0;
+                    break;
+                case 'r':
+                    mot.motorspeed_l = 0;
+                    mot.motorspeed_r = speed;
+                    break;
+            }
         }
 
 
         double black_line_center = xl/l;
-        printf("Odo x = %f\n", odo.x);
-        printf("Center of the black line is %.2f\n", black_line_center);
+       // printf("Odo x = %f\n", odo.x);
+        //printf("Center of the black line is %.2f\n", black_line_center);
 
-        switch(type) 
-        {
-        case 'l':
-                
-                break;
-        case 'm':
-            if(1 > black_line_center + 0.05 && -1 < black_line_center - 0.05) {
+       if(1 > black_line_center + 0.05 && -1 < black_line_center - 0.05) {
                 mot.motorspeed_l = speed;
                 mot.motorspeed_r = speed;
             } else if (1 < black_line_center + 0.05) {
@@ -258,10 +277,6 @@ int followline(double speed, int time, char type)
             } else {
                 return mot.finished;
             }
-            break;
-        case 'r':
-            break;
-       }
     return 0;
 }
 
@@ -284,7 +299,9 @@ int turnr(double radius, double degrees)
 }
 int stop()
 {
-    printf("Not yet implemented stop");
+    mot.motorspeed_l = 0;
+    mot.motorspeed_r = 0;
+    //printf("Not yet implemented stop");
     return 1;
 }
 int idle()

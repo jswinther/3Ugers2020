@@ -3,7 +3,7 @@
  */
 
 #include "include_all.h"
-#define ROBOTPORT	8000 //24902
+
 
 int main()
 {
@@ -152,7 +152,7 @@ int main()
         switch (mission.state) {
             
             case ms_obs1:
-                followline(0.3, mission.time, 'm');
+                followline(0.3, 'l');
                 
                 
                 //if(run_obstacle_1() == 1) mission.state = ms_obs2;
