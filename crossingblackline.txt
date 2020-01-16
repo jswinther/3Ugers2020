@@ -1,0 +1,10 @@
+int crossingblackline() {
+    double sum = 0;
+    for (int i = 0; i < 9; i++)
+    {
+        sum += linesensor->data[i];
+    }
+    return sum < BLACK_TAPE*9 ? 0 : 1;
+}
+
+

@@ -24,6 +24,7 @@ int turnr(double radius, double degrees);
 int stop();
 int idle();
 int followline(double speed, char type);
+int crossingblackline();
 int followwall(char side, double dist);
 int resetmotors();
 int ignoreobstacles();
@@ -88,14 +89,24 @@ void update_odo(odotype *p)
     p->y = p->y + U*sin(p->theta);
 }
 
+void update_motcon(motiontype *p){ 
 
-void update_motcon(motiontype *p)
-{ 
-    if (p->cmd !=0)
-    {
+double distLeft = fabs((p->dist - (p->right_pos+p->left_pos)/2-p->startpos));
+double angleLeft = fabs((p->angle*p->w)/2 - (p->right_pos-p->startpos));
+double K = 5;
+double K1 = DEF_TURN*(0.00625);
+double accel = fabs(K * (p->dist - p->right_pos-p->startpos));
+double rotAccel = fabs(K1 * (angleLeft));
+double vMax = sqrt(2*accel*distLeft);
+double rMax = sqrt(2*rotAccel*angleLeft);
+
+// || fabs(distLeft) < 0.15
+
+
+if (p->cmd !=0){
+     
         p->finished=0;
-        switch (p->cmd)
-        {
+     switch (p->cmd){
             case mot_stop:
                 p->curcmd=mot_stop;
                 break;
@@ -103,6 +114,7 @@ void update_motcon(motiontype *p)
                 p->startpos=(p->left_pos+p->right_pos)/2;
                 p->curcmd=mot_move;
                 break;
+       
             case mot_turn:
                 if (p->angle > 0) 
 	                p->startpos=p->right_pos;
@@ -110,64 +122,79 @@ void update_motcon(motiontype *p)
 	                p->startpos=p->left_pos;
                 p->curcmd=mot_turn;
                 break;
+       
+       
         }
+     
         p->cmd=0;
     }
    
-    switch (p->curcmd)
-    {
+   switch (p->curcmd){
         case mot_stop:
             p->motorspeed_l=0;
             p->motorspeed_r=0;
             break;
         case mot_move:
-            if ((p->right_pos+p->left_pos)/2- p->startpos > p->dist)
-            {
+        
+       if ((p->right_pos+p->left_pos)/2- p->startpos > p->dist){
                 p->finished=1;
 	            p->motorspeed_l=0;
                 p->motorspeed_r=0;
             }	  
-            else 
-            {	
-	            p->motorspeed_l=p->speedcmd;
-                p->motorspeed_r=p->speedcmd;
+       else {
+	
+	
+	if(vMax+0.05 < p->motorspeed_l){
+
+	  globalSpeedFwd -= accel;
+	}else if(p->motorspeed_l < p->speedcmd - accel){
+	  globalSpeedFwd += accel;
+	}
+	  p->motorspeed_l=globalSpeedFwd;
+          p->motorspeed_r=globalSpeedFwd; 
+	
             }
             break;  
+     
         case mot_turn:
-            if (p->angle>0)
-            {
-                p->motorspeed_l=0;
-	            if (p->right_pos-p->startpos < p->angle*p->w)
-                {
-	                p->motorspeed_r=p->speedcmd;
+//printf("motturn\n");
+       if (p->angle>0){
+
+	  if(rMax < p->motorspeed_l && p->right_pos-p->startpos < (p->angle*p->w)/2){
+	      globalSpeedTurn += rotAccel;
+	      p->motorspeed_r= globalSpeedTurn;
+	      p->motorspeed_l= -globalSpeedTurn;
+	  }else if(rMax > p->motorspeed_l && p->right_pos-p->startpos < (p->angle*p->w)/2){
+	      globalSpeedTurn -= rotAccel;
+	      p->motorspeed_r= globalSpeedTurn;
+	      p->motorspeed_l= -globalSpeedTurn;
 	            }
-	            else 
-                {	     
+	  else {	     
                     p->motorspeed_r=0;
+	    p->motorspeed_l=0;
                     p->finished=1;
 	            }
 	        }
-	        else 
-            {
-                p->motorspeed_r=0;
-	            if (p->left_pos-p->startpos < fabs(p->angle)*p->w) 
-                {
-                    p->motorspeed_l=p->speedcmd;
+	else {
+	  if (p->left_pos-p->startpos < (fabs(p->angle)*p->w)/2){
+	      p->motorspeed_r-= rotAccel;
+	      p->motorspeed_l+= rotAccel;
                 }
-	            else 
-                {	     
+	  else {	     
                     p->motorspeed_l=0;
+	    p->motorspeed_r=0;
                     p->finished=1;
 	            }
 	        }
+ 
             break;
     }   
 }   
 
-
 int fwd(double dist, double speed,int time)
 {
     if (time==0){ 
+        printf("\nfwd speed 1: %f ",mot.speedcmd);
         mot.cmd=mot_move;
         mot.speedcmd=speed;
         mot.dist=dist;
@@ -175,6 +202,7 @@ int fwd(double dist, double speed,int time)
     }
     else
     {
+        printf("\nfwd speed 2: %f ",mot.speedcmd);
         return mot.finished;
     }
 }
@@ -280,6 +308,15 @@ int followline(double speed, char type)
     return 0;
 }
 
+int crossingblackline() {
+    double sum = 0;
+    for (int i = 0; i < 9; i++)
+    {
+        sum += linesensor->data[i];
+    }
+    return sum < BLACK_TAPE*9 ? 0 : 1;
+}
+
 int followwall(char side, double dist)
 {
     printf("Not yet implemented followwall");
@@ -299,6 +336,7 @@ int turnr(double radius, double degrees)
 }
 int stop()
 {
+    printf("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOP ANHOLD");
     mot.motorspeed_l = 0;
     mot.motorspeed_r = 0;
     //printf("Not yet implemented stop");

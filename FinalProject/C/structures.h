@@ -22,7 +22,8 @@
 #include "xmlio.h"
 
 #include "definitions.h"
-
+double globalSpeedFwd = DEF_FWD;
+double globalSpeedTurn = DEF_TURN;
 enum 
 {
    mot_stop=1,
