@@ -92,7 +92,7 @@ componentservertype lmssrv,camsrv;
 #define WHEEL_DIAMETER   0.06522	/* m */
 #define WHEEL_SEPARATION 0.26	/* m */
 #define DELTA_M (M_PI * WHEEL_DIAMETER / 2000)
-#define ROBOTPORT	24902 //8000
+#define ROBOTPORT	8000//24902 //8000
 
 
 typedef struct{ //input signals
@@ -326,7 +326,7 @@ while (running){
      break;
   
      case ms_fwd:
-  follow_the_line_1(&mot, linesensor);
+  center_of_mass(&mot, linesensor);
 	if(missionTime < 2000) 
     mission.state=ms_fwd;
   else

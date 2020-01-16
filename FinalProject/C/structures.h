@@ -21,6 +21,9 @@
 #include "componentserver.h"
 #include "xmlio.h"
 
+#define DEF_FWD 0.3
+#define DEF_TURN 0.3
+
 enum 
 {
    mot_stop=1,
@@ -57,6 +60,8 @@ typedef struct
 	double right_pos,left_pos;
 	// internal variables
 	int left_enc_old, right_enc_old;
+  //odo
+  double x, y, theta;
 } odotype;
 
 typedef struct

@@ -20,7 +20,7 @@
   <robot>
     <mrcserver port="8000"/>
     <clients number="5"/>
-    <params name="smr0" robotpose="0  2.0 0" wheelbase="0.26" encresolution="0.00010245"/>
+    <params name="smr0" robotpose="0.6 2.0 0" wheelbase="0.26" encresolution="0.00010245"/>
     <irsensor ka="16.0" kb="76.0"/>
     <laserscanner port="19001" laserpose="0.26 0.0 0.0"/>
   </robot>

@@ -150,9 +150,13 @@ int main()
         */
         sm_update(&mission);
         switch (mission.state) {
+            
             case ms_obs1:
-                if(run_obstacle_1() == 1) mission.state = ms_obs2;
-                printf("Obs %d\n", mission.state);
+                followline(0.3, mission.time, 'm');
+                
+                
+                //if(run_obstacle_1() == 1) mission.state = ms_obs2;
+                //printf("Obs %d\n", mission.state);
                 break;
             case ms_obs2:
                 if(run_obstacle_2() == 1) mission.state = ms_obs3;
