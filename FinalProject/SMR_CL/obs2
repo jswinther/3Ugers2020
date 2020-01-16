@@ -1,9 +1,32 @@
+laser "scanpush cmd='zoneobst'"
 
-followline "bl" :($crossingblackline==1)
+stringcat $l8
+stringcat $l4
+stringcat $l5
+stringcat $l0
+followline "bl" @v0.3 :($crossingblackline==1)
 wait 1
 ignoreobstacles
 followline "bm" :($crossingblackline==1)
-wait 1
-followline "bm" :($drivendist==0.1175)
-fwd -0.2
-followline "bm" :($crossingblackline==1)
+stop
+ignoreobstacles
+followline "bm" :($drivendist > 0.1175)
+
+fwd -0.5
+drive @v-0.3 :($l8 > 1 & $l0 > 1 & $l7 > 1 & $l1 > 1)
+stop
+
+ignoreobstacles
+turn -1.5 "rad"
+
+ignoreobstacles
+drive @v0.3 :($crossingblackline)
+turn 45
+ignoreobstacles
+followline "bm" @v0.3 :($crossingblackline)
+drive :($drivendist > 0.1175)
+
+ignoreobstacles
+followline "bm" @v0.3 :($crossingblackline)
+
+stop
