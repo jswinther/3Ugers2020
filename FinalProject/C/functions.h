@@ -233,7 +233,7 @@ void sm_update(smtype *p)
     else 
     {
      p->time++;
-    }
+    } 
 }
 
 /**

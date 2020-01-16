@@ -127,5 +127,6 @@ symTableElement *lenc,*renc,*linesensor,*irsensor, *speedl,*speedr,*resetmotorr,
 odotype odo;
 smtype mission;
 motiontype mot;
+smtype mission1;
 
 #endif
