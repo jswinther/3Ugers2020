@@ -21,8 +21,7 @@
 #include "componentserver.h"
 #include "xmlio.h"
 
-#define DEF_FWD 0.3
-#define DEF_TURN 0.3
+#include "definitions.h"
 
 enum 
 {
@@ -116,9 +115,7 @@ componentservertype lmssrv,camsrv;
 /*****************************************
 * odometry
 */
-#define WHEEL_DIAMETER   0.06522	/* m */
-#define WHEEL_SEPARATION 0.26	/* m */
-#define DELTA_M (M_PI * WHEEL_DIAMETER / 2000)
+
 
 
 // SMR input/output data
