@@ -1,0 +1,9 @@
+
+dc = 2
+label "doublecross"
+followline "bl" :($crossingblackline)
+dc = dc - 1
+drive :($drivendist > 0.2)
+goto "doublecross"
+
+

@@ -45,7 +45,7 @@ int IRcalibration() {
     int finished = 0;
     //printf("\nstate = %d",mission.state);
 
-    sm_update(&mission); 
+    sm_update(&mission);
     switch(mission.state) {
         case IRc_IRmeasure:
            // printf("\nmodulus: %d", mission.time % 17);
@@ -56,6 +56,7 @@ int IRcalibration() {
             // printf("\nGO - case 1");
                 if (measurecount == 1)
                 {
+                    printf("\nNext Distance\n");
                 //    printf("\nIF");
                 //   printf("\ngot to fwd");
                     measurecount = 100;
@@ -70,6 +71,7 @@ int IRcalibration() {
                 //   printf("\nELSE IF");
                     mission.state = IRc_end;
                 // printf("\ngot to END!");
+
                 }
                 
                 else
@@ -80,6 +82,7 @@ int IRcalibration() {
                  //   printf("\n$$ $$ Laserpar: %f ",laserpar[4]);
                     //printf("\nELSE");
                 }
+                
             }
             break;
 
@@ -90,7 +93,7 @@ int IRcalibration() {
                 printf("\n\nRuns left: %d\n",IRc_n);
                 mission.state = IRc_IRmeasure;
                 
-                
+                    printf("\nMeasuring\n");
                 
             }
 
