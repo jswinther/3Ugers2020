@@ -1,10 +1,15 @@
 
-dc = 2
-label "doublecross"
+
+% Drives straight across dc=n black lines, following the line on the other side and stopping at the n'th line
+n = 2
+label "stopAtLine_n"
+dc = n
+label "cross"
 ignoreobstacles
 followline "bl" :($crossingblackline)
 dc = dc-1
 ignoreobstacles
 drive :($drivendist > 0.2)
-if (dc != 0)  "doublecross"
+if (dc != 0)  "cross"
+
 fwd -1

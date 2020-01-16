@@ -1,23 +1,19 @@
 laser "scanpush cmd='zoneobst'"
 
-stringcat $l8
-stringcat $l4
-stringcat $l5
-stringcat $l0
-followline "bl" @v0.3 :($crossingblackline==1)
-wait 1
+
 ignoreobstacles
-followline "bm" :($crossingblackline==1)
-stop
+followline "bl" :($crossingblackline)
+drive :($drivendist > 0.1175) %% half robot length to get sensor across black line
 ignoreobstacles
-followline "bm" :($drivendist > 0.1175)
+followline "bm" :($crossingblackline)
+ignoreobstacles
+drive :($drivendist > 0.1175) %% half robot length to push box
 
 fwd -0.5
-drive @v-0.3 :($l8 > 1 & $l0 > 1 & $l7 > 1 & $l1 > 1)
-stop
+drive @v-0.3 :($l8 > 1 & $l0 > 1 & $l7 > 1 & $l1 > 1) %% laser scanner measerues sides are clear
 
 ignoreobstacles
-turn -1.5 "rad"
+turn -90 @v0.3
 
 ignoreobstacles
 drive @v0.3 :($crossingblackline)
@@ -25,8 +21,6 @@ turn 45
 ignoreobstacles
 followline "bm" @v0.3 :($crossingblackline)
 drive :($drivendist > 0.1175)
-
 ignoreobstacles
-followline "bm" @v0.3 :($crossingblackline)
-
+followline "br" @v0.3 :($crossingblackline)
 stop
