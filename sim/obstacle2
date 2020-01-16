@@ -1,21 +1,37 @@
-%laser "scanpush cmd='zoneobst'"
-%startx = $odox
-%starty = $odoy
+
+ignoreobstacles
+turn ["2"]
+
+laser "scanpush cmd='zoneobst'"
+startx = $odox
+starty = $odoy
 
 % End condition
-%followline "bm" :($odoth < -1.50)
-%wait 1
-%endx = $odox + $l4
-%endy = $odoy
-%res = sqrt(endx*endx+endy*endy)
-%stringcat "Distance from start to the box is = " res
-
-followline "bl" :($crossingblackline==1)
+followline "bm" :($odoth < -1.50)
 wait 1
+endx = $odox + $l4
+endy = $odoy
+res = sqrt(endx*endx+endy*endy)
+stringcat "Distance from start to the box is = " res
+
+
+
+followline "bl" @v 0.4 :($crossingblackline==1)
+stop
 ignoreobstacles
 followline "bm" :($crossingblackline==1)
-wait 1
-followline "bm" :($drivendist==0.1175)
-fwd -0.2
-followline "bm" :($crossingblackline==1)
+stop
+ignoreobstacles
+followline "bm" :($drivendist>0.17)
+stop
+ignoreobstacles
+fwd -1
+turn b ["-1.5"]
+drive @v 0.3 :($crossingblackline==1)
+stop
+fwd 0.2
+stop
+turn 90
+ignoreobstacles
+followline "bm"
 
