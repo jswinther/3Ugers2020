@@ -137,20 +137,20 @@ int main()
             while ( (xml_in_fd(xmldata,camsrv.sockfd) >0))
                 xml_proc(xmldata);
         }
-        
+         
         rhdSync();
-        odo.left_enc=lenc->data[0];
-        odo.right_enc=renc->data[0];
-        update_odo(&odo);
-        
-        /****************************************\
+        odo.left_enc=lenc->data[0];      
+        odo.right_enc=renc->data[0];    
+        update_odo(&odo); 
+          
+        /****************************************\   
                       statemachine           
         \****************************************/  
 
         switch (statemachine) {
             case ms_obs1:
                 if(run_obstacle_1() == 1) statemachine = ms_obs2; 
-                printf("Obs %d\n", statemachine+1); // the first case is 0, but we call it obs_1, so -> +1
+                //printf("Obs %d\n", statemachine+1); // the first case is 0, but we call it obs_1, so -> +1
                 break;
             case ms_obs2:
                 if(run_obstacle_2() == 1) statemachine = ms_obs3;

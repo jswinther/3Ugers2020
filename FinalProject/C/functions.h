@@ -23,7 +23,7 @@ int drive(double speed);
 int turnr(double radius, double degrees);
 int stop();
 int idle();
-int followline(double speed, int time, char type);
+int followline(double speed, char type);
 int followwall(char side, double dist);
 int resetmotors();
 int ignoreobstacles();
@@ -213,7 +213,7 @@ void sm_update(smtype *p)
  * \param type is 'l' for left tracking, 'm' for middle tracking, 'r' for right tracking.
  * \return returns 1 if there is a blackline returns 0 when there is no more blackline.
  **/
-int followline(double speed, int time, char type)
+int followline(double speed, char type)
 {
         double xl = 0;
         double l = 0;
@@ -237,8 +237,8 @@ int followline(double speed, int time, char type)
 
 
         double black_line_center = xl/l;
-        printf("Odo x = %f\n", odo.x);
-        printf("Center of the black line is %.2f\n", black_line_center);
+       // printf("Odo x = %f\n", odo.x);
+        //printf("Center of the black line is %.2f\n", black_line_center);
 
         switch(type) 
         {
@@ -284,7 +284,9 @@ int turnr(double radius, double degrees)
 }
 int stop()
 {
-    printf("Not yet implemented stop");
+    mot.motorspeed_l = 0;
+    mot.motorspeed_r = 0;
+    //printf("Not yet implemented stop");
     return 1;
 }
 int idle()
