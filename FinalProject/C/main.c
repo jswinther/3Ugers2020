@@ -144,7 +144,7 @@ int main()
         update_odo(&odo); 
           
         /****************************************\   
-                      statemachine           
+                      statemachine            
         \****************************************/  
 
         switch (statemachine) {
