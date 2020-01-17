@@ -20,13 +20,17 @@ all:	${PROG}
 ${PROG}: ${OBJS}
 	${LD} -o ${@} ${LDFLAGS} ${OBJS} ${LIBS}
 
-main: main.o serverif.o
-	${LD} -o ${@} ${LDFLAGS} main.o serverif.o ${LIBS}
+main: main.o serverif.o .FORCE
+	${LD} -o ${@} ${LDFLAGS} main.o serverif.o ${LIBS} && ./main
 
-test: test.o serverif.o
-	${LD} -o ${@} ${LDFLAGS} test.o serverif.o ${LIBS}
+test: test.o serverif.o .FORCE
+	${LD} -o ${@} ${LDFLAGS} test.o serverif.o ${LIBS} && ./test
 
 clean:
 	rm -f ${OBJS}
 
 ${OBJS}: ${HDRS} Makefile
+
+version.o:   
+
+.FORCE:
