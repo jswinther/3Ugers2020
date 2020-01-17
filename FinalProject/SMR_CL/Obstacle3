@@ -10,15 +10,59 @@ stringcat $l5
 stringcat $l6
 stringcat $l7
 stringcat $l8
-fwd 0.2
+fwd 0.75
 
-followline "bm" @v0.3 :($l0 != 1000)
-a = (cos(0.349)*$l0) - 0.23
+
+%% Find the closest shit to black line yo
+array "L" 4
+array "l" 4
+
+
+l[0] = $l0
+l[1] = $l1
+l[2] = $l2
+l[3] = $l3
+
+L[0] = tan(1.222)*$l0
+L[1] = tan(0.873)*$l1
+L[2] = tan(0.524)*$l2
+L[3] = tan(0.175)*$l3
+
+i = 0
+n = -1
+multi = 5
+label "loopLowestTrue"
+lowNum = L[i]
+n = n+1
+multi = multi-1
+label "loopLowestFalse"
+i = i+1
+if(i==4) "loopLowestDone"
+if(L[i] < lowNum) "loopLowestTrue"
+goto "loopLowestFalse"
+label "loopLowestDone"
+
+stringcat lowNum
+
+maxDistToWall = tan(0.175+(0.349*multi))*l[n]
+
+stringcat maxDistToWall
+z =l[n]
+stringcat z
+
+%%gaaahfuck
+
+followline "bm" @v0.3 :($l0 <= maxDistToWall)
+stop
+
+%% part 2 - Follow Gate
+
+a = (cos(0.349)*$l0) + 0.235
 
 stringcat $l1
 stringcat $l0
 
-followline "bm" @v0.3 :($l0 < a)
+followline "bm" @v0.3 :($drivendist < a)
 
 
 stringcat $l0
@@ -37,7 +81,7 @@ turn -90
 stringcat $l1
 stringcat $l0
 
-wallDist = 0.3
+wallDist = 0.2
 
 followwall "l" wallDist :($odoth > 0.3)
-turnr 0.5 1.183 "rad"
+turnr 0.3 1.183 "rad"

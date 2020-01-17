@@ -1,0 +1,29 @@
+
+a = (cos(0.349)*$l0) - 0.23
+
+stringcat $l1
+stringcat $l0
+
+followline "bm" @v0.3 :($l0 < a)
+
+
+stringcat $l0
+stringcat $l1
+
+a = (cos(0.349)*$l0)
+driveDist=(tan(0.349)*a)+0.235
+
+fwd driveDist
+
+turn 90
+ignoreobstacles
+drive :($l4 < 0.2)
+turn -90
+
+stringcat $l1
+stringcat $l0
+
+wallDist = 0.3
+
+followwall "l" wallDist :($odoth > 0.3)
+turnr 0.5 1.183 "rad"
