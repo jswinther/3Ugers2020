@@ -118,14 +118,14 @@ int main()
     printf("position: %f, %f\n", odo.left_pos, odo.right_pos);
     mot.w=odo.w;
     running=1; 
-    int statemachine=ms_obs1;
+    int statemachine=ms_obs1; 
     
     
     /**********************************************************************************
      *                                 MAIN LOOP START
      **********************************************************************************/
     while (running)
-    { 
+    {  
         if (lmssrv.config && lmssrv.status && lmssrv.connected)
         {
             while ( (xml_in_fd(xmllaser,lmssrv.sockfd) >0))
@@ -143,11 +143,11 @@ int main()
         odo.right_enc=renc->data[0];      
         update_odo(&odo);   
              
-        /****************************************\        
-                      statemachine             
-        \******************* *********************/      
+        /****************************************\         
+                      statemachine                   
+        \******************* *********************/       
 
-        switch (statemachine) {
+        switch (statemachine) {    
             case ms_obs1:
                 if(run_obstacle_1() == 1) statemachine = ms_obs2; 
                 //printf("Obs %d\n", statemachine+1); // the first  case is 0, but we call it obs_1, so -> +1
@@ -209,4 +209,4 @@ int main()
     rhdSync();
     rhdDisconnect();
     exit(0);
-}
+}  

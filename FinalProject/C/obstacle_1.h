@@ -34,7 +34,7 @@ int run_obstacle_1() {
         mission.state=obs1_fl;
         mission.oldstate=-1;
         obs1_initFlag = 1;
-        printf("\nStart position x,y: %f, %f", odo.x,odo.y); 
+        printf("\nStart position x,y: %f, %f", odo.x_pos,odo.y_pos); 
     }
 
     int finished = 0;
@@ -44,22 +44,14 @@ int run_obstacle_1() {
     switch(mission.state) 
     {
         case obs1_fl:
-            if(odo.theta > -1.43) 
+            if(fl(1.05,0.5,mission.time,'m')) 
             {
-                followline(0.3, 'm');
-                printf("\nangle postion theta: %f", odo.theta);  
-                
-            }
-            else
-            {
-                stop();
-                printf("\nEnd position x,y: %f, %f", odo.x,odo.y);  
                 mission.state = obs1_measure;
             }
 	        break;
 
         case obs1_measure:
-            if(mission.time % 22 == 0) // to insure that the laserpar array has been updated
+            if(mission.time % 25 == 0) // to insure that the laserpar array has been updated
             {
                 distance += laserpar[4];
                 printf("\nIR Sensor = %f", laserpar[4]);                
@@ -70,7 +62,7 @@ int run_obstacle_1() {
                 }
                 else 
                 {
-                    distance = (distance/10)+(odo.x+0.235);//0.235 distance from origo to sensor
+                    distance = (distance/10)+(odo.x_pos+0.235);//0.235 distance from origo to sensor
                     printf("\ndistance to box is = %f", distance);  
                     mission.state = obs1_end;
                 }

@@ -28,5 +28,10 @@
  * The raw value from linesenors on black tape
  * Choose the highest measured value
  **/
-#define GREY_CONCRETE_FLOOR 78
-#define BLACK_TAPE 66
+
+//real World
+//#define lineBlack 43-3      //43
+//#define lineWhite 74+3      //74
+// Simulation
+#define lineBlack 0
+#define lineWhite 128

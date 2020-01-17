@@ -30,7 +30,3 @@ clean:
 	rm -f ${OBJS}
 
 ${OBJS}: ${HDRS} Makefile
-
-version.o:   
-
-.FORCE:

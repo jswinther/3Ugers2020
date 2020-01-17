@@ -4,12 +4,11 @@
  * Enums and Structs
  **/
 enum {
-    obs2_fwd,
+    obs2_fl,
     obs2_measure,
     obs2_end
 };
 
-int obs2 = obs2_fwd;
 /**
  * Prototypes
  **/
@@ -23,7 +22,7 @@ int obs2_initFlag=0;
 int run_obstacle_2() {
     if(!obs2_initFlag) // insures that the statemachine starts in the correct case
     {
-        mission.state=obs2_fwd;
+        mission.state=obs2_fl;
         mission.oldstate=-1;
         obs2_initFlag = 1;
         //printf("\nStart position x,y: %f, %f", odo.x,odo.y); 
@@ -35,8 +34,8 @@ int run_obstacle_2() {
     //printf("\nMission time: %d",mission.time);
     switch(mission.state) 
     {
-        case obs2_fwd:
-            if(1) 
+        case obs2_fl:
+            if(fl()) 
             {
                 mission.state = obs2_measure;
             }

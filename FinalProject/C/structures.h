@@ -22,14 +22,9 @@
 #include "xmlio.h"
 
 #include "definitions.h"
-double globalSpeedFwd = DEF_FWD;
-double globalSpeedTurn = DEF_TURN;
-enum 
-{
-   mot_stop=1,
-   mot_move,
-   mot_turn
-};
+double Speed=0.0;
+
+enum {mot_stop=1,mot_move,mot_turn,mot_line};
 
 // Obstacles.
 enum 
@@ -50,28 +45,18 @@ struct
    double x, y, z, omega, phi, kappa, code,id,crc;
 } gmk;
 
-typedef struct
-{ //input signals
-	int left_enc,right_enc; // encoderticks
-	// parameters
-	double w;	// wheel separation
-	double cr,cl;   // meters per encodertick
-   	//output signals
-	double right_pos,left_pos;
-	// internal variables
 	int left_enc_old, right_enc_old;
-  //odo
-  double x, y, theta;
-} odotype;
+
 
 typedef struct
-{ //input
-   int cmd;
-   int curcmd;
+{//input
+	int cmd;
+	int curcmd;
 	double speedcmd;
 	double dist;
 	double angle;
 	double left_pos,right_pos;
+	char direction;
 	// parameters
 	double w;
 	//output
@@ -79,7 +64,7 @@ typedef struct
 	int finished;
 	// internal variables
 	double startpos;
-} motiontype;
+}motiontype;
 	       
 typedef struct
 {
@@ -89,6 +74,7 @@ typedef struct
 
 double visionpar[10];
 double laserpar[10];
+double ls_calib[8];
 
 
 
@@ -116,6 +102,24 @@ componentservertype lmssrv,camsrv;
 /*****************************************
 * odometry
 */
+typedef struct{ //input signals  // V
+		
+	int left_enc,right_enc; // encoderticks
+	// parameters
+	double w;	// wheel separation
+	double cr,cl;   // meters per encodertick
+		//output signals
+	double right_pos,left_pos;
+	// internal variables
+	int left_enc_old, right_enc_old;
+
+	// odometry pose
+	double x_pos,y_pos;
+	double theta_pos,theta;
+	double old_theta;
+	
+	double theta_ref; // den teoretiske vinkel
+} odotype;
 
 
 
