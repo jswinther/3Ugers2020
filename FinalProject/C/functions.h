@@ -477,13 +477,12 @@ double centerMass(char color)
 int crossingblackline() 
 {
     lineSens_calib();
-    double sum = 0;
     for (int i = 0; i < 8; i++)
     {
-        sum += ls_calib[i];
+        if(ls_calib[i] > 0.2)
+            return 0;
     }
-    //if(sum < 0.2*7+)
-    return sum <= lineBlack*9 ? 1 : 0;
+    return 1;
 }
 
 int followwall(char side, double dist)
