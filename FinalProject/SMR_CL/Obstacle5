@@ -1,5 +1,7 @@
-
-
-
-turn 45
-followblackline "bm" :()
+laser "scanpush cmd='zoneobst'"
+fwd 0.2
+turn 80
+turnr 0.4 90
+fwd -0.22
+ignoreobstacles
+followline "bm" @v0.3 :($drivendist > 3)
