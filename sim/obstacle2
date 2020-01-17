@@ -1,6 +1,5 @@
 
 ignoreobstacles
-turn ["2"]
 
 laser "scanpush cmd='zoneobst'"
 startx = $odox
@@ -26,7 +25,7 @@ followline "bm" :($drivendist>0.17)
 stop
 ignoreobstacles
 fwd -1
-turn b ["-1.5"]
+turn -90
 drive @v 0.3 :($crossingblackline==1)
 stop
 fwd 0.2
