@@ -30,7 +30,7 @@ int lineSens_min();
 double centerMass(char color);
 int crossingblackline();
 void center_of_mass(motiontype *p, symTableElement *s);
-
+int blacklinefound();
 /**
  * Mot Con
  **/
@@ -42,6 +42,12 @@ int stop(int time);
 int drive(double speed, int time);
 int turnr(double radius, double degrees, double speed, double dist, int time);
 int followwall(char side, double dist, int time, double speed);
+
+
+/**
+ * Debug
+ **/
+int counter = 0;
 
 /**********************************************************************
  * 								Odometry
@@ -207,6 +213,8 @@ void update_motcon(motiontype *p)
 		break;
 	/*************************** MOT LINE ************************************/
 	case mot_line:
+		ls = lineSens_min();
+		printf("p->end = %d\n", p->end);
 		switch (p->end)
 		{
 		case end_dist:
@@ -225,20 +233,29 @@ void update_motcon(motiontype *p)
             */
 			}
 			break;
-
+		case end_black_line_found:
+			if(black_line_found == 1)
+			{
+				p->finished = 1;
+				p->motorspeed_l = 0;
+				p->motorspeed_r = 0;
+			}
+			break;
+		case end_cross:
+			
+			if(crossing_black_line == 1) 
+			{
+				p->finished = 1;
+				p->motorspeed_l = 0;
+				p->motorspeed_r = 0;
+			}
+				
+			break;
 		default:
 			break;
 		}
-
-		if (p->finished == 1)
-		{
-			p->motorspeed_l = 0;
-			p->motorspeed_r = 0;
-		}
-
-		ls = lineSens_min();
-
-		if (p->finished == 0)
+		
+		if(p->finished != 1)
 		{
 			d = fabs(p->dist) - (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
 			v_max = sqrt(2 * 0.5 * d);
@@ -277,7 +294,7 @@ void update_motcon(motiontype *p)
 			}
 			else
 			{
-				if (Speed > 0.005)
+				if (Speed >= 0.005)
 					Speed -= 0.005;
 				//	printf("\nspeed-");
 			}
@@ -285,6 +302,8 @@ void update_motcon(motiontype *p)
 
 			p->motorspeed_l = Speed + delta_v;
 			p->motorspeed_r = Speed - delta_v;
+			printf("deltav %f, left ms %f, right ms %f, counter %d\n",delta_v, p->motorspeed_l, p->motorspeed_r, counter);
+			++counter;
 		}
 		break;
 
@@ -368,7 +387,7 @@ void update_motcon(motiontype *p)
 	case mot_turnr:
 		if (p->angle > 0)
 		{
-			p->motorspeed_l = p->speedcmd *;
+			p->motorspeed_l = p->speedcmd * p->radius;
 			if (p->right_pos - p->startpos < p->angle * p->w)
 			{
 				p->motorspeed_r = p->speedcmd;
@@ -472,6 +491,17 @@ double centerMass(char color)
 	return x_cu / x_cd;
 }
 
+int blacklinefound() 
+{
+	lineSens_calib();
+	for (int i = 0; i < 8; i++)
+	{
+		if (ls_calib[i] < 0.2)
+			return 1;
+	}
+	return 0;
+}
+
 int crossingblackline()
 {
 	lineSens_calib();
@@ -556,18 +586,23 @@ int drive(double speed, int time)
 }
 
 /**
+ * 
 * \param direction 'm' middel / 'r' right / 'l' left
 **/
-int fl(int end, double dist, double speed, int time, char direction)
+int fl(int end, double dist, int ir_index, double ir_dist, double speed, int time, char direction)
 {
 
 	if (time == 0)
 	{
 		mot.end = end;
+		mot.dist = dist;
+		mot.ir_index = ir_index;
+		mot.ir_dist = ir_dist;
+		mot.speedcmd = speed;
 		mot.direction = direction;
 		mot.cmd = mot_line;
-		mot.speedcmd = speed;
-		mot.dist = dist;
+		
+		
 		return 0;
 	}
 	else

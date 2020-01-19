@@ -5,8 +5,9 @@
  **/
 enum Obstacle2 {
     obs2_fl, //follow black line left until it finds crossing black line.
+    obs2_fm1, 
     obs2_fwd, //Drives just past the black cross.
-    obs2_fm, //Follow line and push box forward until it hits cross.
+    obs2_fm2, //Follow line and push box forward until it hits cross.
     obs2_fwd2, //Drive past line.
     obs2_drive_back, //
     obs2_end
@@ -38,28 +39,24 @@ int run_obstacle_2() {
     switch(mission.state) 
     {
         case obs2_fl:
-            if(1) 
+            if(fl(end_dist, 0.7, 0, 0, 0.3, mission.time, 'l')) 
             {
-                mission.state = obs2_fwd;
+                mission.state = obs2_fm1;
+            }
+	        break;
+        case obs2_fm1:
+            if (fl(end_cross, 20, 0, 0, 0.6, mission.time, 'm'))
+            {   
+                mission.state = obs2_end;
             }
             
-	        break;
-
-        case obs2_fwd:
-            if(mission.time % 22 == 0) // to insure that the laserpar array has been updated
-            {
-                if (1)
-                {
-                    mission.state = obs2_end;
-                }
-                
-            }
             break;
         
         case obs2_end:
             finished = 1;
 	        break;
     }
+    
     return finished;
 }
 

@@ -3,7 +3,8 @@
 /**
  * Enums and Structs
  **/
-enum {
+enum
+{
     obs1_fl,
     obs1_measure,
     obs1_end
@@ -14,11 +15,11 @@ enum {
 \**************/
 int run_obstacle_1();
 double raw2real(double raw);
-int laserparLength = (sizeof(laserpar)/sizeof(double))-1;
+int laserparLength = (sizeof(laserpar) / sizeof(double)) - 1;
 int obs1_n = 10;
-int obs1_initFlag=0;
+int obs1_initFlag = 0;
 
-double distance =0;
+double distance = 0;
 
 /**********************************************************************/
 /**********************************************************************/
@@ -27,53 +28,52 @@ double distance =0;
 /*************\
  * Functions *
 \*************/
-int run_obstacle_1() {
+int run_obstacle_1()
+{
 
-    if(!obs1_initFlag) // insures that the statemachine starts in the correct case
+    if (!obs1_initFlag) // insures that the statemachine starts in the correct case
     {
-        mission.state=obs1_fl;
-        mission.oldstate=-1;
+        mission.state = obs1_fl;
+        mission.oldstate = -1;
         obs1_initFlag = 1;
-        printf("\nStart position x,y: %f, %f", odo.x_pos,odo.y_pos); 
+        printf("\nStart position x,y: %f, %f", odo.x_pos, odo.y_pos);
     }
 
     int finished = 0;
-    sm_update(&mission); 
+    sm_update(&mission);
     //printf("\nMission state: %d",mission.state);
     //printf("\nMission time: %d",mission.time);
-    switch(mission.state) 
+    switch (mission.state)
     {
-        case obs1_fl:
-            if(fl(1.05,0.5,mission.time,'m')) 
-            {
-                mission.state = obs1_measure;
-            }
-	        break;
+    case obs1_fl:
+        if (fl(end_dist, 1.05, 0, 0, 0.5, mission.time, 'm'))
+        {
+            mission.state = obs1_measure;
+        }
+        break;
 
-        case obs1_measure:
-            if(mission.time % 25 == 0) // to insure that the laserpar array has been updated
-            {
-                distance += laserpar[4];
-                printf("\nIR Sensor = %f", laserpar[4]);                
+    case obs1_measure:
+        if (mission.time % 25 == 0) // to insure that the laserpar array has been updated
+        {
+            distance += laserpar[4];
+            printf("\nIR Sensor = %f", laserpar[4]);
 
-                if(obs1_n > 1) 
-                {
-                    obs1_n--;
-                }
-                else 
-                {
-                    distance = (distance/10)+(odo.x_pos+0.235);//0.235 distance from origo to sensor
-                    printf("\ndistance to box is = %f", distance);  
-                    mission.state = obs1_end;
-                }
-                
+            if (obs1_n > 1)
+            {
+                obs1_n--;
             }
-            break;
-        
-        case obs1_end:
-            finished = 1;
-	        break;
+            else
+            {
+                distance = (distance / 10) + (odo.x_pos + 0.235); //0.235 distance from origo to sensor
+                printf("\ndistance to box is = %f", distance);
+                mission.state = obs1_end;
+            }
+        }
+        break;
+
+    case obs1_end:
+        finished = 1;
+        break;
     }
     return finished;
 }
-

@@ -83,6 +83,8 @@ typedef struct
 	double startpos;
 	double radius;
 	int end;
+	int ir_index;
+	double ir_dist;
 } motiontype;
 
 typedef struct
@@ -154,8 +156,8 @@ smtype mission1;
  * 			GLOBAL VARIABLES USED AS END CONIDTIONS
  * 
  **********************************************************/
-int crossingblackline = 0;
-int blacklinefound = 0;
+int crossing_black_line = 0;
+int black_line_found = 0;
 
 
 

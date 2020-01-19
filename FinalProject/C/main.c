@@ -97,15 +97,15 @@ int main()
             exit(errno);
         }
     
-        serverconnect(&lmssrv); 
+        serverconnect(&lmssrv);  
         if (lmssrv.connected){
             xmllaser=xml_in_init(4096,32);
             printf(" laserserver xml initialized \n");
-            len=sprintf(buf,"scanpush cmd='zoneobst'\n");
+            len=sprintf(buf,"scanpush cmd='zoneobst'\n"); 
             send(lmssrv.sockfd,buf,len,0);
-        }
-    }   
-        
+        } 
+    }    
+         
         
     /* Read sensors and zero our position.  */
     rhdSync();
@@ -113,7 +113,7 @@ int main()
     odo.cr=DELTA_M;
     odo.cl=odo.cr;
     odo.left_enc=lenc->data[0];
-    odo.right_enc=renc->data[0];
+    odo.right_enc=renc->data[0]; 
     reset_odo(&odo);
     printf("position: %f, %f\n", odo.left_pos, odo.right_pos);
     mot.w=odo.w;
@@ -133,50 +133,51 @@ int main()
         }
         
         if (camsrv.config && camsrv.status && camsrv.connected)
-        {
+        {    
             while ( (xml_in_fd(xmldata,camsrv.sockfd) >0))
                 xml_proc(xmldata);
-        }
+        }  
          
-        rhdSync();
+        rhdSync(); 
         odo.left_enc=lenc->data[0];           
-        odo.right_enc=renc->data[0];      
+        odo.right_enc=renc->data[0];         
         update_odo(&odo);   
-             
+        crossing_black_line = crossingblackline(); 
+        black_line_found = blacklinefound();
         /****************************************\         
-                      statemachine                   
-        \******************* *********************/       
-
-        switch (statemachine) {    
+                      statemachine                     
+        \******************* *********************/        
+  
+        switch (statemachine) {     
             case ms_obs1:
-                if(run_obstacle_1() == 1) statemachine = ms_obs2; 
+                if(run_obstacle_1() == 1) statemachine = ms_obs2;  
                 //printf("Obs %d\n", statemachine+1); // the first  case is 0, but we call it obs_1, so -> +1
-                break; 
+                break;   
             case ms_obs2:  
                 if(run_obstacle_2() == 1) statemachine = ms_obs3;
                 //printf("Obs %d\n", statemachine+1);               
-                break;
+                break; 
             case ms_obs3:   
                 if(run_obstacle_3() == 1) statemachine = ms_obs4;
                 printf("Obs %d\n", statemachine+1);
                 break;
-            case ms_obs4:
+            case ms_obs4: 
                 if(run_obstacle_4() == 1) statemachine = ms_obs5;
                 printf("Obs %d\n", statemachine+1);
-                break;
+                break; 
             case ms_obs5:
                 if(run_obstacle_5() == 1) statemachine = ms_obs6;
                 printf("Obs %d\n", statemachine+1);
-                break;
+                break; 
             case ms_obs6:
                 if(run_obstacle_6() == 1) statemachine = ms_end;
                 printf("Obs %d\n", statemachine+1);
                 break;                
-            case ms_end:
+            case ms_end: 
                 mot.cmd=mot_stop;
                 running=0;
                 break;
-        }  
+        }    
         /*  end of mission  */ 
         
         mot.left_pos=odo.left_pos;
