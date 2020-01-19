@@ -10,7 +10,7 @@ int main()
     // Connection.
     
     // **************************************************
-    //  Establish connection to robot sensors and actuators
+    //  Establish connection to robot sensors and actuators 
     // **************************************************
     int running,arg,time=0;
     if (rhdConnect('w',"localhost",ROBOTPORT)!='w')
@@ -18,7 +18,7 @@ int main()
         printf("Can't connlect to rhd \n");
         exit(EXIT_FAILURE); 
     }    
-        
+         
     printf("connected to robot \n");    
 
     if ((inputtable=getSymbolTable('r'))== NULL)

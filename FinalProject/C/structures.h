@@ -22,53 +22,72 @@
 #include "xmlio.h"
 
 #include "definitions.h"
-double Speed=0.0;
+double Speed = 0.0;
 
-enum {mot_stop=1,mot_move,mot_turn,mot_line};
+enum
+{
+	mot_stop = 1,
+	mot_move,
+	mot_turn,
+	mot_line,
+	mot_followwall,
+	mot_turnr,
+	mot_drive
+};
 
 // Obstacles.
-enum 
+enum
 {
 	ms_obs1,
 	ms_obs2,
 	ms_obs3,
 	ms_obs4,
-  ms_obs5,
-  ms_obs6,
-  ms_end
+	ms_obs5,
+	ms_obs6,
+	ms_end
+};
+
+
+enum end_conditions 
+{
+	end_dist,
+	end_cross,
+	end_black_line_found,
+	end_ir
 };
 
 struct xml_in *xmldata;
 struct xml_in *xmllaser;
-struct 
+struct
 {
-   double x, y, z, omega, phi, kappa, code,id,crc;
+	double x, y, z, omega, phi, kappa, code, id, crc;
 } gmk;
 
-	int left_enc_old, right_enc_old;
-
+int left_enc_old, right_enc_old;
 
 typedef struct
-{//input
+{ //input
 	int cmd;
 	int curcmd;
 	double speedcmd;
 	double dist;
 	double angle;
-	double left_pos,right_pos;
+	double left_pos, right_pos;
 	char direction;
 	// parameters
 	double w;
 	//output
-	double motorspeed_l,motorspeed_r; 
+	double motorspeed_l, motorspeed_r;
 	int finished;
 	// internal variables
 	double startpos;
-}motiontype;
-	       
+	double radius;
+	int end;
+} motiontype;
+
 typedef struct
 {
-   int state,oldstate;
+	int state, oldstate;
 	int time;
 } smtype;
 
@@ -76,61 +95,75 @@ double visionpar[10];
 double laserpar[10];
 double ls_calib[8];
 
+componentservertype lmssrv, camsrv;
 
+symTableElement *
+getinputref(const char *sym_name, symTableElement *tab)
+{
+	int i;
+	for (i = 0; i < getSymbolTableSize('r'); i++)
+		if (strcmp(tab[i].name, sym_name) == 0)
+			return &tab[i];
+	return 0;
+}
 
-componentservertype lmssrv,camsrv;
-
- symTableElement * 
-     getinputref (const char *sym_name, symTableElement * tab)
-     {
-       int i;
-       for (i=0; i< getSymbolTableSize('r'); i++)
-         if (strcmp (tab[i].name,sym_name) == 0)
-           return &tab[i];
-       return 0;
-     }
-
-    symTableElement * 
-     getoutputref (const char *sym_name, symTableElement * tab)
-     {
-       int i;
-       for (i=0; i< getSymbolTableSize('w'); i++)
-         if (strcmp (tab[i].name,sym_name) == 0)
-           return &tab[i];
-       return 0;
-     }
+symTableElement *
+getoutputref(const char *sym_name, symTableElement *tab)
+{
+	int i;
+	for (i = 0; i < getSymbolTableSize('w'); i++)
+		if (strcmp(tab[i].name, sym_name) == 0)
+			return &tab[i];
+	return 0;
+}
 /*****************************************
 * odometry
 */
-typedef struct{ //input signals  // V
-		
-	int left_enc,right_enc; // encoderticks
+typedef struct
+{ //input signals  // V
+
+	int left_enc, right_enc; // encoderticks
 	// parameters
-	double w;	// wheel separation
-	double cr,cl;   // meters per encodertick
-		//output signals
-	double right_pos,left_pos;
+	double w;	  // wheel separation
+	double cr, cl; // meters per encodertick
+				   //output signals
+	double right_pos, left_pos;
 	// internal variables
 	int left_enc_old, right_enc_old;
 
 	// odometry pose
-	double x_pos,y_pos;
-	double theta_pos,theta;
+	double x_pos, y_pos;
+	double theta_pos, theta;
 	double old_theta;
-	
+
 	double theta_ref; // den teoretiske vinkel
 } odotype;
 
-
-
 // SMR input/output data
 
-symTableElement *  inputtable,*outputtable;
-symTableElement *lenc,*renc,*linesensor,*irsensor, *speedl,*speedr,*resetmotorr,*resetmotorl;
+symTableElement *inputtable, *outputtable;
+symTableElement *lenc, *renc, *linesensor, *irsensor, *speedl, *speedr, *resetmotorr, *resetmotorl;
 
 odotype odo;
 smtype mission;
 motiontype mot;
 smtype mission1;
+
+/**********************************************************
+ * 
+ * 			GLOBAL VARIABLES USED AS END CONIDTIONS
+ * 
+ **********************************************************/
+int crossingblackline = 0;
+int blacklinefound = 0;
+
+
+
+
+
+
+
+
+
 
 #endif
