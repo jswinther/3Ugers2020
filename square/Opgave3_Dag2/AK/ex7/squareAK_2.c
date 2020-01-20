@@ -85,7 +85,7 @@ typedef struct{ //input signals
 	double theta_pos;
 	double old_theta;
 	
-	double theta_ref; // den teoretiske vinkel
+	double reference_theta; // den teoretiske vinkel
 } odotype;
 
 void reset_odo(odotype *p);
