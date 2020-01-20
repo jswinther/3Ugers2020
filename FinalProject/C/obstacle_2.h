@@ -47,11 +47,16 @@ int run_obstacle_2() {
         case obs2_fm1:
             if (fl(end_cross, 20, 0, 0, 0.6, mission.time, 'm'))
             {   
-                mission.state = obs2_end;
+                mission.state = obs2_drive_back;
             }
             
             break;
-        
+        case obs2_drive_back:
+            if(fwd(-1, -0.3, mission.time))
+            {
+                mission.state = obs2_end;
+            }
+            break;
         case obs2_end:
             finished = 1;
 	        break;

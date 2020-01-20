@@ -43,7 +43,6 @@ int drive(double speed, int time);
 int turnr(double radius, double degrees, double speed, double dist, int time);
 int followwall(char side, double dist, int time, double speed);
 
-
 /**
  * Debug
  **/
@@ -179,37 +178,75 @@ void update_motcon(motiontype *p)
 
 		/*************************** MOT MOVE ************************************/
 	case mot_move:
-		if ((p->right_pos + p->left_pos) / 2 - p->startpos > p->dist)
+		if (p->speedcmd > 0 && p->dist > 0)
 		{
-			p->finished = 1;
-			p->motorspeed_l = 0;
-			p->motorspeed_r = 0;
-		}
-		else
-		{
-			d = fabs(p->dist) - (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
-			v_max = sqrt(2 * 0.5 * d);
-
-			delta_v = k * (odo.theta_ref - odo.theta);
-
-			//printf("\nSpeed: %f",Speed);
-			//printf("\nMAximum Speed: %f",v_max);
-			//printf("\nremaing distance: %f",d);
-
-			if (Speed <= v_max)
+			if ((p->right_pos + p->left_pos) / 2 - p->startpos > p->dist)
 			{
-				if (Speed < p->speedcmd)
-					Speed += 0.005;
+				p->finished = 1;
+				p->motorspeed_l = 0;
+				p->motorspeed_r = 0;
 			}
 			else
 			{
-				Speed -= 0.005;
-			}
-			//printf("\nref: %f  odo: %f  deltaV: %f",odo.theta_ref,odo.theta,delta_v);
+				d = fabs(p->dist) - (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
+				v_max = sqrt(2 * 0.5 * d);
 
-			p->motorspeed_l = Speed - delta_v;
-			p->motorspeed_r = Speed + delta_v;
+				delta_v = k * (odo.theta_ref - odo.theta);
+
+				//printf("\nSpeed: %f",Speed);
+				//printf("\nMAximum Speed: %f",v_max);
+				//printf("\nremaing distance: %f",d);
+
+				if (Speed <= v_max)
+				{
+					if (Speed < p->speedcmd)
+						Speed += 0.005;
+				}
+				else
+				{
+					Speed -= 0.005;
+				}
+				//printf("\nref: %f  odo: %f  deltaV: %f",odo.theta_ref,odo.theta,delta_v);
+
+				p->motorspeed_l = Speed - delta_v;
+				p->motorspeed_r = Speed + delta_v;
+			}
 		}
+		else
+		{
+			if ((p->right_pos + p->left_pos) / 2 - p->startpos < p->dist)
+			{
+				p->finished = 1;
+				p->motorspeed_l = 0;
+				p->motorspeed_r = 0;
+			}
+			else
+			{
+				d = fabs(p->dist) - (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
+				v_max = sqrt(2 * 0.5 * d);
+
+				delta_v = k * (odo.theta_ref - odo.theta);
+
+				//printf("\nSpeed: %f",Speed);
+				//printf("\nMAximum Speed: %f",v_max);
+				//printf("\nremaing distance: %f",d);
+
+				if (Speed >= -v_max)
+				{
+					if (Speed > p->speedcmd)
+						Speed -= 0.005;
+				}
+				else
+				{
+					Speed += 0.005;
+				}
+				//printf("\nref: %f  odo: %f  deltaV: %f",odo.theta_ref,odo.theta,delta_v);
+
+				p->motorspeed_l = Speed - delta_v;
+				p->motorspeed_r = Speed + delta_v;
+			}
+		}
+
 		break;
 	/*************************** MOT LINE ************************************/
 	case mot_line:
@@ -234,7 +271,7 @@ void update_motcon(motiontype *p)
 			}
 			break;
 		case end_black_line_found:
-			if(black_line_found == 1)
+			if (black_line_found == 1)
 			{
 				p->finished = 1;
 				p->motorspeed_l = 0;
@@ -242,20 +279,20 @@ void update_motcon(motiontype *p)
 			}
 			break;
 		case end_cross:
-			
-			if(crossing_black_line == 1) 
+
+			if (crossing_black_line == 1)
 			{
 				p->finished = 1;
 				p->motorspeed_l = 0;
 				p->motorspeed_r = 0;
 			}
-				
+
 			break;
 		default:
 			break;
 		}
-		
-		if(p->finished != 1)
+
+		if (p->finished != 1)
 		{
 			d = fabs(p->dist) - (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
 			v_max = sqrt(2 * 0.5 * d);
@@ -302,7 +339,7 @@ void update_motcon(motiontype *p)
 
 			p->motorspeed_l = Speed + delta_v;
 			p->motorspeed_r = Speed - delta_v;
-			printf("deltav %f, left ms %f, right ms %f, counter %d\n",delta_v, p->motorspeed_l, p->motorspeed_r, counter);
+			printf("deltav %f, left ms %f, right ms %f, counter %d\n", delta_v, p->motorspeed_l, p->motorspeed_r, counter);
 			++counter;
 		}
 		break;
@@ -491,7 +528,7 @@ double centerMass(char color)
 	return x_cu / x_cd;
 }
 
-int blacklinefound() 
+int blacklinefound()
 {
 	lineSens_calib();
 	for (int i = 0; i < 8; i++)
@@ -601,8 +638,7 @@ int fl(int end, double dist, int ir_index, double ir_dist, double speed, int tim
 		mot.speedcmd = speed;
 		mot.direction = direction;
 		mot.cmd = mot_line;
-		
-		
+
 		return 0;
 	}
 	else

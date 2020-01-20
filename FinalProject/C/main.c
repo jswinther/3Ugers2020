@@ -6,8 +6,8 @@
 #define ROBOTPORT	8000 //24902
 
 int main()
-{    
-    // Connection.
+{     
+    // Connection.   
     
     // **************************************************
     //  Establish connection to robot sensors and actuators 
@@ -19,7 +19,7 @@ int main()
         exit(EXIT_FAILURE); 
     }    
          
-    printf("connected to robot \n");    
+    printf("connected to robot \n");        
 
     if ((inputtable=getSymbolTable('r'))== NULL)
     {
@@ -79,7 +79,7 @@ int main()
     // **************************************************
     //  LMS server code initialization
     //
-    
+     
     
 
 
