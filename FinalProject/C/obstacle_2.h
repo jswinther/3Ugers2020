@@ -71,18 +71,21 @@ int run_obstacle_2() {
             if (turn(-1.57,0.3,mission.time))
             {   
                 mission.state = obs2_drive;
+              //  printf("\n\n\n\ndrive done");
             }
             break;
         case obs2_drive:
             if (drive(end_black_line_found,0.3,mission.time))
             {   
-                mission.state = obs2_end;
+                //printf("\ndrive done");
+                mission.state = obs2_turnr;
             }
             break;
 
         case obs2_turnr:
             if (turnr(0.2,1.57,0.3,mission.time))
             {   
+                printf("\nturnr done");
                 mission.state = obs2_end;
             }
             break;

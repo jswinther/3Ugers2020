@@ -171,7 +171,7 @@ void update_motcon(motiontype *p)
 	switch (p->curcmd)
 	{
 	case mot_stop:
-		printf("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOP ANHOLD");
+		printf("\nSTOOOOOOOOP ANHOLD");
 		p->motorspeed_l = 0;
 		p->motorspeed_r = 0;
 		break;
@@ -183,10 +183,10 @@ void update_motcon(motiontype *p)
 		else
 			z = -1;
 
-		int x = ((fabs(p->right_pos + p->left_pos) / 2 - p->startpos) > p->dist);
-		printf("\nif : %f - %f > %f -> STOP", fabs(p->right_pos + p->left_pos) / 2, p->startpos, p->dist);
-		printf("\nif : %f > %f -> STOP", (fabs(p->right_pos + p->left_pos) / 2 - p->startpos), p->dist);
-		printf(x ? "\ntrue" : "\nfalse");
+		//int x = ((fabs(p->right_pos + p->left_pos) / 2 - p->startpos) > p->dist);
+		//printf("\nif : %f - %f > %f -> STOP", fabs(p->right_pos + p->left_pos) / 2, p->startpos, p->dist);
+		//printf("\nif : %f > %f -> STOP", (fabs(p->right_pos + p->left_pos) / 2 - p->startpos), p->dist);
+		//printf(x ? "\ntrue" : "\nfalse");
 
 		if (fabs(fabs(p->right_pos + p->left_pos) / 2 - p->startpos) > p->dist)
 		{
@@ -196,10 +196,10 @@ void update_motcon(motiontype *p)
 		}
 		else
 		{
-			printf("\nif : %f - %f > %f -> STOP", fabs(p->right_pos + p->left_pos) / 2, p->startpos, p->dist);
+			//printf("\nif : %f - %f > %f -> STOP", fabs(p->right_pos + p->left_pos) / 2, p->startpos, p->dist);
 
 			d = fabs(p->dist) - z * (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
-			printf("\nd = %f - %f = %f", fabs(p->dist), z * (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos)), d);
+			//printf("\nd = %f - %f = %f", fabs(p->dist), z * (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos)), d);
 			v_max = sqrt(fabs(2 * 0.5 * d)) * (d / fabs(d));
 			delta_v = k * (odo.theta_ref - odo.theta);
 
@@ -208,7 +208,7 @@ void update_motcon(motiontype *p)
 				if (fabs(Speed) < p->speedcmd)
 				{
 					Speed += 0.005 * z;
-					printf("\nspeed++\n");
+					//printf("\nspeed++\n");
 				}
 			}
 			else
@@ -216,10 +216,10 @@ void update_motcon(motiontype *p)
 				if (Speed > 0.005)
 				{
 					Speed -= 0.005 * z;
-					printf("\nspeed--\n");
+					//printf("\nspeed--\n");
 				}
 			}
-			printf("\nSpeed: %f Speedcmd: %f  v_max: %f d: %f  deltaV: %f", Speed, p->speedcmd, v_max, d, delta_v);
+			//printf("\nSpeed: %f Speedcmd: %f  v_max: %f d: %f  deltaV: %f", Speed, p->speedcmd, v_max, d, delta_v);
 
 			p->motorspeed_l = (Speed - delta_v) * z;
 			p->motorspeed_r = (Speed + delta_v) * z;
@@ -228,7 +228,7 @@ void update_motcon(motiontype *p)
 	/*************************** MOT LINE ************************************/
 	case mot_line:
 		ls = lineSens_min();
-		printf("p->end = %d\n", p->end);
+		//printf("p->end = %d\n", p->end);
 		switch (p->end)
 		{
 		case end_dist:
@@ -316,7 +316,7 @@ void update_motcon(motiontype *p)
 
 			p->motorspeed_l = Speed + delta_v;
 			p->motorspeed_r = Speed - delta_v;
-			printf("deltav %f, left ms %f, right ms %f, counter %d\n", delta_v, p->motorspeed_l, p->motorspeed_r, counter);
+			//printf("deltav %f, left ms %f, right ms %f, counter %d\n", delta_v, p->motorspeed_l, p->motorspeed_r, counter);
 			++counter;
 		}
 		break;
@@ -403,10 +403,10 @@ void update_motcon(motiontype *p)
 	case mot_turnr:
 		if (p->angle > 0)
 		{ // if (current angel < requested)
-			if ((fabs(odo.theta_pos - odo.old_theta) * p->w) < (p->angle * p->w))
+			if ((fabs(odo.theta - odo.old_theta) * p->w) < ((p->angle+odo.theta) * p->w))
 			{
-				//printf("\nRIGHT requested angle= %f",p->angle);
-				//printf("\nRIGHT current angle= %f",fabs(odo.theta_pos - odo.old_theta));
+				printf("\nRIGHT RR requested angle= %f",p->angle);
+				printf("\nRIGHT RR current angle= %f",fabs(odo.theta_pos - odo.old_theta));
 
 				// Theta is distant left - theta = requested angle - current angle
 				theta = (p->angle * p->w) - (fabs(odo.theta_pos - odo.old_theta) * p->w);
@@ -430,6 +430,10 @@ void update_motcon(motiontype *p)
 			}
 			else
 			{
+				printf("\ntheta Pos: %f   old theta:  %f0", odo.theta_pos, odo.old_theta);
+				printf("\ntheta ref: %f   theta:  %f0", odo.theta_ref, odo.theta);
+				printf("\n if : %f < %f",(fabs(odo.theta - odo.old_theta) * p->w),((p->angle+odo.theta) * p->w));
+				//printf("\nMot_turnr DONE");
 				p->motorspeed_r = 0;
 				p->motorspeed_l = 0;
 				p->finished = 1;
@@ -438,7 +442,7 @@ void update_motcon(motiontype *p)
 		/*************************** Part 2 ************************************/
 		else
 		{
-			if (fabs(odo.theta_pos - odo.old_theta) * p->w < fabs(p->angle * p->w))
+			if (fabs(odo.theta - odo.old_theta) * p->w < fabs(p->angle * p->w))
 			{
 
 				//printf("\nLEFT requested angle= %f", fabs(p->angle));
@@ -652,6 +656,8 @@ int turnr(double radius, double angle, double speed, int time)
 {
 	if (time == 0)
 	{
+		odo.old_theta = odo.theta;
+
 		mot.radius = radius;
 		mot.angle = angle;
 		mot.cmd = mot_turnr;
