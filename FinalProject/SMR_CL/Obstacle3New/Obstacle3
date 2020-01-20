@@ -1,0 +1,102 @@
+laser "scanpush cmd='zoneobst'"
+
+stringcat $l0
+stringcat $l0
+stringcat $l1
+stringcat $l2
+stringcat $l3
+stringcat $l4
+stringcat $l5
+stringcat $l6
+stringcat $l7
+stringcat $l8
+%followline "bm" @v0.3 :($drivendist > 0.3)
+
+%% Find the closest shit to black line yo
+array "L" 4
+array "l" 4
+
+
+l[0] = $l0
+l[1] = $l1
+l[2] = $l2
+l[3] = $l3
+
+L[0] = tan(1.222)*$l0
+L[1] = tan(0.873)*$l1
+L[2] = tan(0.524)*$l2
+L[3] = tan(0.175)*$l3
+
+i = 0
+n = -1
+multi = 5
+label "loopLowestTrue"
+lowNum = L[i]
+n = n+1
+multi = multi-1
+label "loopLowestFalse"
+i = i+1
+if(i==4) "loopLowestDone"
+if(L[i] < lowNum) "loopLowestTrue"
+goto "loopLowestFalse"
+label "loopLowestDone"
+
+stringcat lowNum
+
+
+maxDistToWall = tan(0.175+(0.349*multi))*l[n]
+
+stringcat maxDistToWall
+z =l[n]
+stringcat z
+
+%%gaaahfuck
+
+followline "bm" @v0.3 :($l0 <= maxDistToWall)
+stop
+
+%% part 2 - Follow Gate
+
+%a = (cos(0.349)*$l0) + 0.1175
+
+stringcat $l1
+stringcat $l0
+
+%followline "bm" @v0.3 :($drivendist < a)
+
+
+stringcat $l0
+stringcat $l1
+
+a = 0
+n = 0
+label "addUp"
+wait 0.001
+l0=$l0 :($l0 < maxDistToWall+0.1)
+a = a + (cos(0.349)*l0)
+n = n + 1
+if (n < 100) "addUp"
+a = a/100
+stringcat a
+
+driveDist=(tan(0.349)*a) + 0.235
+
+
+followline "bm" @v0.3 :($drivendist > driveDist)
+
+turn 90 @v0.2
+%ignoreobstacles
+%drive :($l4 < 0.3 | $l3< 0.3)
+%turn -90
+
+stringcat $l1
+stringcat $l0
+
+
+drive @v0.3 :($drivendist > driveDist)
+stop
+
+%wallDist = 0.2
+
+%followwall "l" wallDist :($odoth > 0.3)
+%turnr 0.3 1.183 "rad"
