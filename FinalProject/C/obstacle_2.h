@@ -11,6 +11,9 @@ enum Obstacle2 {
     obs2_bwd,   // drives 1 meter back
     obs2_turn, // turn -90 deg
     obs2_turnr, // turns wiht radius
+    obs2_fl_cross,
+    obs2_fl_cross_2,
+    obs2_fwd2,
     obs2_end
 };
 
@@ -86,12 +89,27 @@ int run_obstacle_2() {
             if (turnr(0.2,1.57,0.3,mission.time))
             {   
                 printf("\nturnr done");
+                mission.state = obs2_fl_cross;
+            }
+            break;
+        case obs2_fl_cross:
+            if(fl(end_cross, 20, 0, 0, 0.6, mission.time, 'm'))
+            {
+                mission.state = obs2_fwd2;
+            }
+            break;
+        case obs2_fwd2:
+            if(fwd(0.12, 0.6, mission.time))
+            {
+                mission.state = obs2_fl_cross_2;
+            }
+            break;
+        case obs2_fl_cross_2:
+            if(fl(end_cross, 20, 0, 0, 0.6, mission.time, 'm'))
+            {
                 mission.state = obs2_end;
             }
             break;
-        
-
-        
         case obs2_end:
             finished = 1;
 	        break;

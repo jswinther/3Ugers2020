@@ -75,13 +75,13 @@ int main()
         xmldata=xml_in_init(4096,32);
         printf(" camera server xml initialized \n");
     }   
-    
+     
     // **************************************************
     //  LMS server code initialization
     //
     
     
-
+ 
 
     /* Create endpoint */
     lmssrv.config=1;
@@ -187,7 +187,7 @@ int main()
         speedl->updated=1;
         speedr->data[0]=100*mot.motorspeed_r;
         speedr->updated=1;
-
+ 
         // 100 Hz clock, which means this is true once every 1 second.
         if (time  % 100 == 0)
         //    printf(" laser %f \n",laserpar[3]);
@@ -195,7 +195,7 @@ int main()
         /* stop if keyboard is activated
         *
         */
-        ioctl(0, FIONREAD, &arg);
+        ioctl(0, FIONREAD, &arg); 
         if (arg!=0)  running=0;
     }
     /**********************************************************************************

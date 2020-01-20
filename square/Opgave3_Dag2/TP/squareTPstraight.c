@@ -89,7 +89,7 @@ typedef struct{ //input signals
 		// internal variables
 		int left_enc_old, right_enc_old;
 		//pos
-		double x,y,theta;
+		double x,y,current_theta;
 		} odotype;
 
 void reset_odo(odotype *p);

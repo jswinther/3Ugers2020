@@ -135,10 +135,7 @@ typedef struct
 
 	// odometry pose
 	double x_pos, y_pos;
-	double theta_pos, theta;
-	double old_theta;
-
-	double theta_ref; // den teoretiske vinkel
+	double current_theta, old_theta, reference_theta;
 } odotype;
 
 // SMR input/output data
