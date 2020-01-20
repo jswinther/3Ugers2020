@@ -253,6 +253,15 @@ void update_motcon(motiontype *p)
 			}
 
 			break;
+		case end_ir:
+			printf("Laser distance = %f\n", laserpar[p->ir_index]);
+			if(laserpar[p->ir_index] < p->ir_dist)
+			{
+				p->finished = 1;
+				p->motorspeed_l = 0;
+				p->motorspeed_r = 0;
+			}
+			break;
 		default:
 			break;
 		}
@@ -385,6 +394,7 @@ void update_motcon(motiontype *p)
 		}
 		break;
 	case mot_followwall:
+		
 		break;
 	
 	/*************************** MOT TURNRRR ************************************/
@@ -702,6 +712,7 @@ int followwall(char side, double dist, int time, double speed)
 {
 	if (time == 0)
 	{
+		mot.side
 		mot.cmd = mot_followwall;
 		mot.speedcmd = speed;
 		mot.dist = dist;

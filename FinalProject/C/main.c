@@ -6,7 +6,7 @@
 #define ROBOTPORT	8000 //24902
 
 int main()
-{    
+{     
     // Connection.
     
     // **************************************************
@@ -25,14 +25,14 @@ int main()
     {
         printf("Can't connect to rhd \n"); 
         exit(EXIT_FAILURE); 
-    } 
+    }  
         
     if ((outputtable=getSymbolTable('w'))== NULL)
     { 
         printf("Can't connect to rhd \n");
         exit(EXIT_FAILURE); 
     }
-
+ 
     // connect to robot I/O variables
     lenc=getinputref("encl",inputtable);
     renc=getinputref("encr",inputtable);
@@ -109,8 +109,8 @@ int main()
         
     /* Read sensors and zero our position.  */
     rhdSync();
-    odo.w=0.256;
-    odo.cr=DELTA_M;
+    odo.w=0.256; 
+    odo.cr=DELTA_M; 
     odo.cl=odo.cr;
     odo.left_enc=lenc->data[0];
     odo.right_enc=renc->data[0]; 
@@ -118,15 +118,15 @@ int main()
     printf("position: %f, %f\n", odo.left_pos, odo.right_pos);
     mot.w=odo.w;
     running=1; 
-    int statemachine=ms_obs1; 
+    int statemachine=ms_obs3; 
     
     
     /**********************************************************************************
      *                                 MAIN LOOP START
      **********************************************************************************/
-    while (running)
-    {  
-        if (lmssrv.config && lmssrv.status && lmssrv.connected)
+    while (running) 
+    {   
+        if (lmssrv.config && lmssrv.status && lmssrv.connected) 
         {
             while ( (xml_in_fd(xmllaser,lmssrv.sockfd) >0))
                 xml_proca(xmllaser);
@@ -138,7 +138,7 @@ int main()
                 xml_proc(xmldata);
         }  
          
-        rhdSync(); 
+        rhdSync();  
         odo.left_enc=lenc->data[0];           
         odo.right_enc=renc->data[0];         
         update_odo(&odo);   
@@ -151,27 +151,21 @@ int main()
         switch (statemachine) {                           
             case ms_obs1:           
                 if(run_obstacle_1() == 1) statemachine = ms_obs2;   
-                //printf("Obs %d\n", statemachine+1); // the first  case is 0, but we call it obs_1, so -> +1
                 break;   
             case ms_obs2:  
-                if(run_obstacle_2() == 1) statemachine = ms_obs3;
-                //printf("Obs %d\n", statemachine+1);               
+                if(run_obstacle_2() == 1) statemachine = ms_obs3;           
                 break; 
             case ms_obs3:   
                 if(run_obstacle_3() == 1) statemachine = ms_obs4;
-                printf("Obs %d\n", statemachine+1);
                 break;
             case ms_obs4: 
                 if(run_obstacle_4() == 1) statemachine = ms_obs5;
-                printf("Obs %d\n", statemachine+1);
                 break; 
             case ms_obs5:
                 if(run_obstacle_5() == 1) statemachine = ms_obs6;
-                printf("Obs %d\n", statemachine+1);
                 break; 
             case ms_obs6:
                 if(run_obstacle_6() == 1) statemachine = ms_end;
-                printf("Obs %d\n", statemachine+1);
                 break;                
             case ms_end: 
                 mot.cmd=mot_stop;
@@ -183,7 +177,7 @@ int main()
         mot.left_pos=odo.left_pos;
         mot.right_pos=odo.right_pos;
         update_motcon(&mot);
-        speedl->data[0]=100*mot.motorspeed_l;
+        speedl->data[0]=100*mot.motorspeed_l; 
         speedl->updated=1;
         speedr->data[0]=100*mot.motorspeed_r;
         speedr->updated=1;

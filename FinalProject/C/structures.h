@@ -33,6 +33,7 @@ enum
 	mot_followwall,
 	mot_turnr,
 	mot_drive
+
 };
 
 // Obstacles.
@@ -85,6 +86,7 @@ typedef struct
 	int end;
 	int ir_index;
 	double ir_dist;
+	char side;
 } motiontype;
 
 typedef struct
