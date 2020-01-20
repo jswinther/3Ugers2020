@@ -148,9 +148,9 @@ int main()
                       statemachine                     
         \******************* *********************/        
   
-        switch (statemachine) {     
-            case ms_obs1:
-                if(run_obstacle_1() == 1) statemachine = ms_obs2;  
+        switch (statemachine) {                    
+            case ms_obs1:     
+                if(run_obstacle_1() == 1) statemachine = ms_obs2;   
                 //printf("Obs %d\n", statemachine+1); // the first  case is 0, but we call it obs_1, so -> +1
                 break;   
             case ms_obs2:  

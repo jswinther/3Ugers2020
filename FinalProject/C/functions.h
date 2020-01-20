@@ -39,10 +39,9 @@ int fwd(double dist, double speed, int time);
 int turn(double angle, double speed, int time);
 int fl(int end, double dist, int ir_index, double ir_dist, double speed, int time, char direction);
 int stop(int time);
-int drive(double speed, int time);
-int turnr(double radius, double degrees, double speed, double dist, int time);
+int drive(int end, double speed, int time);
+int turnr(double radius, double angle, double speed, int time);
 int followwall(char side, double dist, int time, double speed);
-
 
 /**
  * Debug
@@ -125,7 +124,7 @@ void update_motcon(motiontype *p)
 	double v_max;
 	double delta_v;
 	double k = 0.5;
-	int ls;
+	int ls, z;
 	double k_l = 0.2;
 
 	if (p->cmd != 0)
@@ -179,7 +178,17 @@ void update_motcon(motiontype *p)
 
 		/*************************** MOT MOVE ************************************/
 	case mot_move:
-		if ((p->right_pos + p->left_pos) / 2 - p->startpos > p->dist)
+		if (p->speedcmd > 0)
+			z = 1;
+		else
+			z = -1;
+
+		int x = ((fabs(p->right_pos + p->left_pos) / 2 - p->startpos) > p->dist);
+		printf("\nif : %f - %f > %f -> STOP", fabs(p->right_pos + p->left_pos) / 2, p->startpos, p->dist);
+		printf("\nif : %f > %f -> STOP", (fabs(p->right_pos + p->left_pos) / 2 - p->startpos), p->dist);
+		printf(x ? "\ntrue" : "\nfalse");
+
+		if (fabs(fabs(p->right_pos + p->left_pos) / 2 - p->startpos) > p->dist)
 		{
 			p->finished = 1;
 			p->motorspeed_l = 0;
@@ -187,28 +196,33 @@ void update_motcon(motiontype *p)
 		}
 		else
 		{
-			d = fabs(p->dist) - (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
-			v_max = sqrt(2 * 0.5 * d);
+			printf("\nif : %f - %f > %f -> STOP", fabs(p->right_pos + p->left_pos) / 2, p->startpos, p->dist);
 
+			d = fabs(p->dist) - z * (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
+			printf("\nd = %f - %f = %f", fabs(p->dist), z * (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos)), d);
+			v_max = sqrt(fabs(2 * 0.5 * d)) * (d / fabs(d));
 			delta_v = k * (odo.theta_ref - odo.theta);
 
-			//printf("\nSpeed: %f",Speed);
-			//printf("\nMAximum Speed: %f",v_max);
-			//printf("\nremaing distance: %f",d);
-
-			if (Speed <= v_max)
+			if (fabs(Speed) <= v_max)
 			{
-				if (Speed < p->speedcmd)
-					Speed += 0.005;
+				if (fabs(Speed) < p->speedcmd)
+				{
+					Speed += 0.005 * z;
+					printf("\nspeed++\n");
+				}
 			}
 			else
 			{
-				Speed -= 0.005;
+				if (Speed > 0.005)
+				{
+					Speed -= 0.005 * z;
+					printf("\nspeed--\n");
+				}
 			}
-			//printf("\nref: %f  odo: %f  deltaV: %f",odo.theta_ref,odo.theta,delta_v);
+			printf("\nSpeed: %f Speedcmd: %f  v_max: %f d: %f  deltaV: %f", Speed, p->speedcmd, v_max, d, delta_v);
 
-			p->motorspeed_l = Speed - delta_v;
-			p->motorspeed_r = Speed + delta_v;
+			p->motorspeed_l = (Speed - delta_v) * z;
+			p->motorspeed_r = (Speed + delta_v) * z;
 		}
 		break;
 	/*************************** MOT LINE ************************************/
@@ -234,7 +248,7 @@ void update_motcon(motiontype *p)
 			}
 			break;
 		case end_black_line_found:
-			if(black_line_found == 1)
+			if (black_line_found == 1)
 			{
 				p->finished = 1;
 				p->motorspeed_l = 0;
@@ -242,20 +256,20 @@ void update_motcon(motiontype *p)
 			}
 			break;
 		case end_cross:
-			
-			if(crossing_black_line == 1) 
+
+			if (crossing_black_line == 1)
 			{
 				p->finished = 1;
 				p->motorspeed_l = 0;
 				p->motorspeed_r = 0;
 			}
-				
+
 			break;
 		default:
 			break;
 		}
-		
-		if(p->finished != 1)
+
+		if (p->finished != 1)
 		{
 			d = fabs(p->dist) - (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
 			v_max = sqrt(2 * 0.5 * d);
@@ -302,7 +316,7 @@ void update_motcon(motiontype *p)
 
 			p->motorspeed_l = Speed + delta_v;
 			p->motorspeed_r = Speed - delta_v;
-			printf("deltav %f, left ms %f, right ms %f, counter %d\n",delta_v, p->motorspeed_l, p->motorspeed_r, counter);
+			printf("deltav %f, left ms %f, right ms %f, counter %d\n", delta_v, p->motorspeed_l, p->motorspeed_r, counter);
 			++counter;
 		}
 		break;
@@ -384,36 +398,114 @@ void update_motcon(motiontype *p)
 		break;
 	case mot_followwall:
 		break;
+	
+	/*************************** MOT TURNRRR ************************************/
 	case mot_turnr:
 		if (p->angle > 0)
-		{
-			p->motorspeed_l = p->speedcmd * p->radius;
-			if (p->right_pos - p->startpos < p->angle * p->w)
+		{ // if (current angel < requested)
+			if ((fabs(odo.theta_pos - odo.old_theta) * p->w) < (p->angle * p->w))
 			{
-				p->motorspeed_r = p->speedcmd;
+				//printf("\nRIGHT requested angle= %f",p->angle);
+				//printf("\nRIGHT current angle= %f",fabs(odo.theta_pos - odo.old_theta));
+
+				// Theta is distant left - theta = requested angle - current angle
+				theta = (p->angle * p->w) - (fabs(odo.theta_pos - odo.old_theta) * p->w);
+
+				//printf("\nRIGHT Theta left= %f",theta);
+				v_max_ang = sqrt(2 * 0.5 * theta);
+
+				if (Speed < v_max_ang)
+				{
+					if (Speed < p->speedcmd)
+						Speed += 0.005;
+				}
+				else
+				{
+					Speed -= 0.005;
+				}
+
+				//printf("\nSpeed mot.turn= %f",Speed);
+				p->motorspeed_r = Speed;
+				p->motorspeed_l = Speed*p->radius;
 			}
 			else
 			{
 				p->motorspeed_r = 0;
-				p->finished = 1;
-			}
-		}
-		else
-		{
-			p->motorspeed_r = 0;
-			if (p->left_pos - p->startpos < fabs(p->angle) * p->w)
-			{
-				p->motorspeed_l = p->speedcmd;
-			}
-			else
-			{
 				p->motorspeed_l = 0;
 				p->finished = 1;
 			}
 		}
+		/*************************** Part 2 ************************************/
+		else
+		{
+			if (fabs(odo.theta_pos - odo.old_theta) * p->w < fabs(p->angle * p->w))
+			{
+
+				//printf("\nLEFT requested angle= %f", fabs(p->angle));
+				//printf("\nLEFT current angle= %f",fabs(odo.theta_pos - odo.old_theta));
+				//printf("\nLEFT Speed: %f",Speed);
+
+				// Theta is distant left - theta = requested angle - current angle
+				theta = fabs(p->angle * p->w) - (fabs(odo.theta_pos - odo.old_theta) * p->w);
+
+				//printf("\nLEFT Angle left= %f",theta);
+
+				v_max_ang = sqrt(2 * 0.5 * theta);
+
+				if (Speed < v_max_ang)
+				{
+					if (Speed < p->speedcmd)
+						Speed += 0.005;
+				}
+				else
+				{
+					Speed -= 0.005;
+				}
+
+				p->motorspeed_l = Speed;
+				p->motorspeed_r = Speed*p->radius;
+			}
+			else
+			{
+				p->motorspeed_l = 0;
+				p->motorspeed_r = 0;
+				p->finished = 1;
+			}
+		}
 		break;
+
+		/*************************** MOT DRIVE ************************************/
 	case mot_drive:
+		switch (p->end)
+		{
+		case end_black_line_found:
+			if (black_line_found == 1)
+			{
+				p->finished = 1;
+				p->motorspeed_l = 0;
+				p->motorspeed_r = 0;
+			}
+			break;
+		case end_cross:
+
+			if (crossing_black_line == 1)
+			{
+				p->finished = 1;
+				p->motorspeed_l = 0;
+				p->motorspeed_r = 0;
+			}
+
+			break;
+		}
+
+
+		p->motorspeed_l = p->speedcmd;
+		p->motorspeed_r = p->speedcmd;
+
+
+
 		break;
+
 	}
 }
 
@@ -491,7 +583,7 @@ double centerMass(char color)
 	return x_cu / x_cd;
 }
 
-int blacklinefound() 
+int blacklinefound()
 {
 	lineSens_calib();
 	for (int i = 0; i < 8; i++)
@@ -556,13 +648,14 @@ int stop(int time)
 	}
 }
 
-int turnr(double radius, double degrees, double speed, double dist, int time)
+int turnr(double radius, double angle, double speed, int time)
 {
 	if (time == 0)
 	{
+		mot.radius = radius;
+		mot.angle = angle;
 		mot.cmd = mot_turnr;
 		mot.speedcmd = speed;
-		mot.dist = dist;
 		return 0;
 	}
 	else
@@ -571,10 +664,11 @@ int turnr(double radius, double degrees, double speed, double dist, int time)
 	}
 }
 
-int drive(double speed, int time)
+int drive(int end, double speed, int time)
 {
 	if (time == 0)
 	{
+		mot.end = end;
 		mot.cmd = mot_drive;
 		mot.speedcmd = speed;
 		return 0;
@@ -601,8 +695,7 @@ int fl(int end, double dist, int ir_index, double ir_dist, double speed, int tim
 		mot.speedcmd = speed;
 		mot.direction = direction;
 		mot.cmd = mot_line;
-		
-		
+
 		return 0;
 	}
 	else
