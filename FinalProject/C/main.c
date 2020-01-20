@@ -194,7 +194,7 @@ int main()
         time++;
         /* stop if keyboard is activated
         *
-        */
+        */ 
         ioctl(0, FIONREAD, &arg); 
         if (arg!=0)  running=0;
     }
