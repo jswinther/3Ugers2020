@@ -4,14 +4,16 @@
 %% start stuff
 laser "scanPush cmd='zoneobst'"
 
+%%goto "test6"
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% OBSTACLE 1 %%%%%%%%%%%%%%%%%%%%%%%%%%
-
+label "test1"
 %% Follows the black line until the smr has turned 90 degrees,
 %% then takes a measurement and adds the x distance covered
 %% based on odometry
 
-followline "br" @v 0.2 :($odoth < -1.50)
+
+followline "bm" @v 0.1 :($odoth < -1.35)
 stop
 wait 1
 
@@ -25,40 +27,53 @@ wait 2
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% OBSTACLE 2 %%%%%%%%%%%%%%%%%%%%%%%%%%
-
+label "test2"
 %% Follows line straight to drive through the front of box,
 %% pushing the obstacle away, then drives back until 
 %% laser sensor shows clear, cuts across to the other line
 %% and follows that through the side
 
+odth2 = $odoth
 ignoreobstacles
-followline "bl" @v0.3 :($crossingblackline)
+followline "bl" @v0.1 :($crossingblackline & $odoth > odth2 + 1.2)
 ignoreobstacles
 drive :($drivendist > 0.1175) %% half robot length to push box
 
+ignoreobstacles
+followline "bl" @v0.2 :($crossingblackline)
+ignoreobstacles
+drive :($drivendist > 0.1175) %% half robot length to push box
+
+
 fwd -0.5
-drive @v-0.3 :($l8 > 0.5 & $l0 > 0.5 & $l7 > 0.5 & $l1 > 0.5) %% laser scanner measerues sides are clear
+drive @v-0.3 :($l8 > 0.2 & $l0 > 0.2 & $l7 > 0.2 & $l1 > 0.2) %% laser scanner measerues sides are clear
 
 ignoreobstacles
 turn -90 @v0.3
 
 ignoreobstacles
 drive @v0.3 :($crossingblackline)
-turn 45
+fwd 0.05
+turn 60
+fwd 0.1
+
+odth2 = $odoth
 ignoreobstacles
-followline "bm" @v0.3 :($crossingblackline)
-drive :($drivendist > 0.1175)
+followline "bm" @v0.2 :($crossingblackline & $odoth > odth2 + 1.4)
+drive :($drivendist > 0.15)
+
+odth2 = $odoth
 ignoreobstacles
-followline "br" @v0.3 :($crossingblackline)
+followline "br" @v0.2 :($crossingblackline & $odoth < odth2 - 1.4)
 stop
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% OBSTACLE 3 %%%%%%%%%%%%%%%%%%%%%%%%%%
-
+label "test3"
 %% Finds the object closest to the black line, finds the distance
 %% to that object, positions itself in front of it and drives through
 
-fwd 0.2
+fwd 0.08
 wait 0.1
 
 %% Find the closest shit to black line yo
@@ -102,13 +117,13 @@ z =l[n]
 stringcat z
 	%% end of super cool and advanced algorithm %%%%%
 
-followline "bm" @v0.3 :($l8 <= maxDistToObject)
+followline "bm" @v0.2 :($l8 <= maxDistToObject)
 stop
 wait 0.1
 
 a = (sin(0.349)*$l8) + 0.235*2
 
-followline "bm" @v0.3 :($drivendist > a)
+followline "bm" @v0.2 :($drivendist > a - ((1/(n+1))*0.7))
 stop
 wait 0.1
 
@@ -118,26 +133,26 @@ drive :($drivendist > a)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% OBSTACLE 4 %%%%%%%%%%%%%%%%%%%%%%%%%%
-
+label "test4"
 %% Follows wall to the left (of robot), goes through and backs
 %% out of the gate, then follows wall back to the other gate,
 %% and follows black line until the stopper tape (crossing black line)
 
 %% position paralell to wall
 ignoreobstacles
-drive :($l4 < 0.3)
+drive @v0.2:($l4 < 0.3)
 turn -90
 
 %% follow wall to left gate
-wallDist = 0.4
-ignoreobstacles
-followwall "l" wallDist :($drivendist>0.5)
+wallDist = 0.3
+%ignoreobstacles
+%followwall "l" wallDist :($drivendist>0.3)
 
-l0Wall=$l0
+l0Wall=0.3
 ignoreobstacles
 followwall "l" wallDist :($l0 > l0Wall+0.05)
 stop
-wait 0.1
+wait 1
 
 %% position in fron of gate
 ignoreobstacles
@@ -166,57 +181,59 @@ stop
 
 % find black line and follow it through other gate
 ignoreobstacles
-drive :($crossingblackline)
-fwd 0.15
+drive :($crossingblackline & $drivendist > 0.5)
+fwd 0.15 @v0.2
 stop
 
 ignoreobstacles
-turn -90
+turn -80
 
 ignoreobstacles
-followline "bm" :($crossingblackline==1)
+followline "bm" :($crossingblackline & $drivendist > 0.5)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% OBSTACLE 5 %%%%%%%%%%%%%%%%%%%%%%%%%%
-
+label "test5"
 %% Finds the white line (black in SIM) and follows it around
 %% may need to be changed to odometry depending on accuracy
 %% follow white line command
 
 fwd 0.15
 turn 90
-drive :($crossingblackline)
+odth5 = $odoth
+%drive :($crossingwhiteline)
 fwd 0.1
 stop
 ignoreobstacles
-followline "wm" @v0.15:($crossingblackline)
+followline "wm" @v0.15 :($crossingwhiteline) %% & $odoth > odth5 + 1.2)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% OBSTACLE 6 %%%%%%%%%%%%%%%%%%%%%%%%%%
-
+label "test6"
 %% Follows the line until facing the gate, then navigates 
 %% using the wall to get around box, follows wall closer back,
 %% opening the gate on the way, and then follows line until 
 %% in the box. doesn't close gate
 
-fwd 0.2
+fwd 0.1
 drive @v 0.3 :($crossingblackline)
 fwd 0.1175
 turn 80
 ignoreobstacles
 followline "bm" @v 0.3 :($l4 < 0.4)
 turn 90
-odth = $odoth
-followwall "r" 0.4 :($odoth < odth - 1.5)
+odth6 = $odoth
+followwall "r" 0.4 :($odoth < odth6 - 1.5 & $drivendist > 0.3)
 stop
 turn -90
 ignoreobstacles
 drive :($l4 < 0.2)
 turn -90
-odth = $odoth
+odth6 = $odoth
 ignoreobstacles
-followwall "l" 0.2 :($odoth > odth + 1.5)
+followwall "l" 0.2 :($odoth > odth6 + 1.5)
+drive @v 0.2 :($crossingblackline)
 stop
 turn 90
 ignoreobstacles
-followline "bm" @v 0.3 :($drivendist > 0.6)
+followline "bm" @v 0.2 :($drivendist > 0.3 & $l4 < 0.2)

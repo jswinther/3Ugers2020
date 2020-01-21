@@ -1,16 +1,18 @@
 % Start ulmsserver from the square directory.
 % Then run this program.
-startx = $odox
-stringcat startx
-% End condition
-followline "br" @v 0.2 :($odoth < -1.50)
+
+%% Follows the black line until the smr has turned 90 degrees,
+%% then takes a measurement and adds the x distance covered
+%% based on odometry
 laser "scanPush cmd='zoneobst'"
+
+followline "bm" @v 0.1 :($odoth < -1.35)
+stop
 wait 1
 
 %horizontal distance from start to box
 endx = $odox + $l4 
 
-stringcat $odox
-stringcat "horizontal distance from start to box=" endx
-
-
+stringcat "horizontal distance from start to box="
+stringcat endx
+wait 2

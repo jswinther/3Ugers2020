@@ -1,8 +1,10 @@
 laser "scanpush cmd='zoneobst'"
+
 fwd 0.15
 turn 90
-drive :($crossingblackline)
+odth5 = $odoth
+%drive :($crossingwhiteline)
 fwd 0.1
 stop
 ignoreobstacles
-followline "wm" @v0.15 :($crossingblackline)
+followline "wm" @v0.15 :($crossingwhiteline & $odoth > odth5 + 1.2)

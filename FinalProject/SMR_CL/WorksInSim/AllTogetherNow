@@ -32,9 +32,20 @@ wait 2
 %% and follows that through the side
 
 ignoreobstacles
-followline "bl" @v0.3 :($crossingblackline)
+followline "bl" @v0.2 :($crossingblackline)
 ignoreobstacles
 drive :($drivendist > 0.1175) %% half robot length to push box
+
+followline "bl" @v0.2 :($crossingblackline)
+ignoreobstacles
+drive :($drivendist > 0.1175) %% half robot length to push box
+
+
+ignoreobstacles
+followline "bl" @v0.2 :($crossingblackline)
+ignoreobstacles
+drive :($drivendist > 0.1175) %% half robot length to push box
+
 
 fwd -0.5
 drive @v-0.3 :($l8 > 0.5 & $l0 > 0.5 & $l7 > 0.5 & $l1 > 0.5) %% laser scanner measerues sides are clear

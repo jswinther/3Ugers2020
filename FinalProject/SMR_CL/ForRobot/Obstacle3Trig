@@ -1,16 +1,9 @@
 laser "scanpush cmd='zoneobst'"
 
-stringcat $l0
-stringcat $l0
-stringcat $l1
-stringcat $l2
-stringcat $l3
-stringcat $l4
-stringcat $l5
-stringcat $l6
-stringcat $l7
-stringcat $l8
-fwd 0.5
+%% Finds the object closest to the black line, finds the distance
+%% to that object, positions itself in front of it and drives through
+
+fwd 0.2
 wait 0.1
 
 %% Find the closest shit to black line yo
@@ -28,6 +21,8 @@ L[1] = $l7*sin(0.873)
 L[2] = $l6*sin(0.524)
 L[3] = $l5*sin(0.175)
 
+
+	%% super cool and advanced algorithm %%%%%%
 i = 0
 n = -1
 multi = 5
@@ -50,37 +45,18 @@ maxDistToObject = maxDistToWall/sin(1.22)
 stringcat maxDistToWall
 z =l[n]
 stringcat z
+	%% end of super cool and advanced algorithm %%%%%
 
-%%gaaahfuck
-
-followline "bm" @v0.3 :($l8 <= maxDistToObject)
+followline "bm" @v0.2 :($l8 <= maxDistToObject)
 stop
 wait 0.1
-
-%% part 2 - Follow Gate
 
 a = (sin(0.349)*$l8) + 0.235*2
 
-stringcat $l1
-stringcat $l0
-
-followline "bm" @v0.3 :($drivendist > a)
+followline "bm" @v0.2 :($drivendist > a)
 stop
 wait 0.1
-
-stringcat $l8
-stringcat $l7
-
 
 turn -90
 ignoreobstacles
 drive :($drivendist > a)
-%turn -90
-
-%stringcat $l7
-%stringcat $l8
-
-%wallDist = 0.2
-
-%followwall "l" wallDist :($odoth > 0.3)
-%turnr 0.3 1.183 "rad"

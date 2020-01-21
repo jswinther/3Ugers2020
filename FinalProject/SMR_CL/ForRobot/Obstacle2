@@ -1,27 +1,39 @@
 laser "scanpush cmd='zoneobst'"
 
-%% taken out for new track
-%%ignoreobstacles
-%%followline "bl" :($crossingblackline)
-%%drive :($drivendist > 0.1175) %% half robot length to get sensor across black line
+%% Follows line straight to drive through the front of box,
+%% pushing the obstacle away, then drives back until 
+%% laser sensor shows clear, cuts across to the other line
+%% and follows that through the side
 
+odth2 = $odoth
 ignoreobstacles
-followline "bl" :($crossingblackline)
+followline "bl" @v0.1 :($crossingblackline & $odoth > odth2 + 1.2)
 ignoreobstacles
 drive :($drivendist > 0.1175) %% half robot length to push box
 
+ignoreobstacles
+followline "bl" @v0.2 :($crossingblackline)
+ignoreobstacles
+drive :($drivendist > 0.1175) %% half robot length to push box
+
+
 fwd -0.5
-drive @v-0.3 :($l8 > 0.5 & $l0 > 0.5 & $l7 > 0.5 & $l1 > 0.5) %% laser scanner measerues sides are clear
+drive @v-0.3 :($l8 > 0.2 & $l0 > 0.2 & $l7 > 0.2 & $l1 > 0.2) %% laser scanner measerues sides are clear
 
 ignoreobstacles
 turn -90 @v0.3
 
 ignoreobstacles
 drive @v0.3 :($crossingblackline)
-turn 45
+fwd 0.15
+turn 60
+
+odth2 = $odoth
 ignoreobstacles
-followline "bm" @v0.3 :($crossingblackline)
-drive :($drivendist > 0.1175)
+followline "bm" @v0.2 :($crossingblackline & $odoth > odth2 + 1.4)
+drive :($drivendist > 0.15)
+
+odth2 = $odoth
 ignoreobstacles
-followline "br" @v0.3 :($crossingblackline)
+followline "br" @v0.2 :($crossingblackline & $odoth < odth2 - 1.4)
 stop
