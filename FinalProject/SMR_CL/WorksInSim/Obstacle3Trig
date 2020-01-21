@@ -1,0 +1,86 @@
+laser "scanpush cmd='zoneobst'"
+
+stringcat $l0
+stringcat $l0
+stringcat $l1
+stringcat $l2
+stringcat $l3
+stringcat $l4
+stringcat $l5
+stringcat $l6
+stringcat $l7
+stringcat $l8
+fwd 0.5
+wait 0.1
+
+%% Find the closest shit to black line yo
+array "L" 4
+array "l" 4
+
+
+l[0] = $l8
+l[1] = $l7
+l[2] = $l6
+l[3] = $l5
+
+L[0] = $l8*sin(1.222)
+L[1] = $l7*sin(0.873)
+L[2] = $l6*sin(0.524)
+L[3] = $l5*sin(0.175)
+
+i = 0
+n = -1
+multi = 5
+label "loopLowestTrue"
+lowNum = L[i]
+n = n+1
+multi = multi-1
+label "loopLowestFalse"
+i = i+1
+if(i==4) "loopLowestDone"
+if(L[i] < lowNum) "loopLowestTrue"
+goto "loopLowestFalse"
+label "loopLowestDone"
+
+stringcat lowNum
+
+maxDistToWall = l[n]*sin(0.175+(0.349*multi))
+maxDistToObject = maxDistToWall/sin(1.22)
+
+stringcat maxDistToWall
+z =l[n]
+stringcat z
+
+%%gaaahfuck
+
+followline "bm" @v0.3 :($l8 <= maxDistToObject)
+stop
+wait 0.1
+
+%% part 2 - Follow Gate
+
+a = (sin(0.349)*$l8) + 0.235*2
+
+stringcat $l1
+stringcat $l0
+
+followline "bm" @v0.3 :($drivendist > a)
+stop
+wait 0.1
+
+stringcat $l8
+stringcat $l7
+
+
+turn -90
+ignoreobstacles
+drive :($drivendist > a)
+%turn -90
+
+%stringcat $l7
+%stringcat $l8
+
+%wallDist = 0.2
+
+%followwall "l" wallDist :($odoth > 0.3)
+%turnr 0.3 1.183 "rad"

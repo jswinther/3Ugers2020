@@ -1,0 +1,22 @@
+laser "scanpush cmd='zoneobst'"
+fwd 0.2
+drive @v 0.3 :($crossingblackline)
+fwd 0.1175
+turn 80
+ignoreobstacles
+followline "bm" @v 0.3 :($l4 < 0.4)
+turn 90
+odth = $odoth
+followwall "r" 0.4 :($odoth < odth - 1.5)
+stop
+turn -90
+ignoreobstacles
+drive :($l4 < 0.2)
+turn -90
+odth = $odoth
+ignoreobstacles
+followwall "l" 0.2 :($odoth > odth + 1.5)
+stop
+turn 90
+ignoreobstacles
+followline "bm" @v 0.3 :($drivendist > 0.6)

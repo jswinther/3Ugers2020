@@ -5,4 +5,4 @@ drive :($crossingblackline)
 fwd 0.1
 stop
 ignoreobstacles
-followline "bm" @v0.3 :($crossingblackline)
+followline "wm" @v0.15 :($crossingblackline)

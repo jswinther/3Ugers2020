@@ -1,0 +1,27 @@
+laser "scanpush cmd='zoneobst'"
+
+%% taken out for new track
+%%ignoreobstacles
+%%followline "bl" :($crossingblackline)
+%%drive :($drivendist > 0.1175) %% half robot length to get sensor across black line
+
+ignoreobstacles
+followline "bl" :($crossingblackline)
+ignoreobstacles
+drive :($drivendist > 0.1175) %% half robot length to push box
+
+fwd -0.5
+drive @v-0.3 :($l8 > 0.5 & $l0 > 0.5 & $l7 > 0.5 & $l1 > 0.5) %% laser scanner measerues sides are clear
+
+ignoreobstacles
+turn -90 @v0.3
+
+ignoreobstacles
+drive @v0.3 :($crossingblackline)
+turn 45
+ignoreobstacles
+followline "bm" @v0.3 :($crossingblackline)
+drive :($drivendist > 0.1175)
+ignoreobstacles
+followline "br" @v0.3 :($crossingblackline)
+stop
