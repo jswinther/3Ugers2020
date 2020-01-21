@@ -41,12 +41,13 @@ int fl(int end, double dist, int ir_index, double ir_dist, double speed, int tim
 int stop(int time);
 int drive(int end, double speed, int time);
 int turnr(double radius, double angle, double speed, int time);
-int followwall(char side, double dist, int time, double speed);
+int followwall(/*char side,*/ int time, double speed);
 
 /**
  * Debug
  **/
 int counter = 0;
+int numTurn = 0;
 
 /**********************************************************************
  * 								Odometry
@@ -393,8 +394,52 @@ void update_motcon(motiontype *p)
 			}
 		}
 		break;
+	/*************************** MOT followWall ************************************/
 	case mot_followwall:
+	
+		/*
+		if (mot.side == 'r')
+		{
+			ir_index = 8;
+		}
 		
+		else if (mot.side == 'l')
+		{
+			ir_index = 0;
+		}
+		*/
+		printf("\nlaser dist: %f",laserpar[8]);
+		if (laserpar[8] > 0.50)
+		{
+			p->motorspeed_r = 0;
+			p->motorspeed_l = 0;
+			p->finished = 1;
+			numTurn = 0;			
+		}
+		else
+		{
+			if (laserpar[8] > 0.37)
+			{
+				p->motorspeed_l = p->speedcmd ;
+				p->motorspeed_r = p->speedcmd - 0.05;
+				numTurn++;
+			}
+			else if (laserpar[8] < 0.35)
+			{
+				p->motorspeed_l = p->speedcmd - 0.05;
+				p->motorspeed_r = p->speedcmd ;
+				numTurn--;
+			}
+			else
+			{
+				//if(!numTurn)
+				p->motorspeed_l = p->speedcmd;
+				p->motorspeed_r = p->speedcmd ;
+			}
+			
+
+			
+		}		
 		break;
 	
 	/*************************** MOT TURNRRR ************************************/
@@ -496,11 +541,20 @@ void update_motcon(motiontype *p)
 				p->motorspeed_l = 0;
 				p->motorspeed_r = 0;
 			}
+		case end_ir:		
+
+			if (laserpar[4] < 0.15)
+			{
+				printf("\nLast laser 4: %f",laserpar[4]);
+				p->finished = 1;
+				p->motorspeed_l = 0;
+				p->motorspeed_r = 0;
+			}
 
 			break;
 		}
 
-
+		printf("\nlaser 4: %f",laserpar[4]);
 		p->motorspeed_l = p->speedcmd;
 		p->motorspeed_r = p->speedcmd;
 
@@ -708,14 +762,13 @@ int fl(int end, double dist, int ir_index, double ir_dist, double speed, int tim
 	}
 }
 
-int followwall(char side, double dist, int time, double speed)
+int followwall(/*char side,*/ int time, double speed)
 {
 	if (time == 0)
 	{
-		mot.side
+		/*mot.side = side;*/
 		mot.cmd = mot_followwall;
 		mot.speedcmd = speed;
-		mot.dist = dist;
 		return 0;
 	}
 	else

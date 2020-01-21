@@ -5,9 +5,15 @@
  **/
 enum
 {
-    obs4_fwd,
+    obs4_fwd, // not used
+    obs4_drive,
     obs4_turn,
     obs4_flw,
+    obs4_fwd2,
+    obs4_turn2,
+    obs4_fwd3,
+    obs4_turn3,
+    obs4_flw2,
     obs4_end
 };
 
@@ -38,7 +44,15 @@ int run_obstacle_4()
     switch (mission.state)
     {
     case obs4_fwd:
-        if (fwd(0.5, 0.6, mission.time))
+        if (fwd(0.5, 0.3, mission.time))
+        {
+            mission.state = obs4_drive;
+        }
+        break;
+
+
+    case obs4_drive:
+        if (drive(end_ir, 0.1, mission.time))
         {
             mission.state = obs4_turn;
         }
@@ -47,24 +61,51 @@ int run_obstacle_4()
     case obs4_turn:
         if (turn(1.57, 0.3, mission.time))
         {
+            printf("\nturn done");
             mission.state = obs4_flw;
+            
         }
         break;
 
     case obs4_flw:
-        if (followwall(0.5, 0.6, mission.time))
+        if (followwall(mission.time,0.2))
         {
-            mission.state = obs4_end;
+            printf("\nfollow wall done");
+            mission.state = obs4_fwd2;
         }
         break;
-    case obs4_fwd:
-        if (fwd(0.5, 0.6, mission.time))
+    
+    case obs4_fwd2:
+        if (fwd(0.48, 0.3, mission.time))
         {
-            mission.state = obs4_end;
+            mission.state = obs4_turn2;
         }
         break;
-    case obs4_fwd:
-        if (fwd(0.5, 0.6, mission.time))
+        
+    case obs4_turn2:
+        if (turn(-1.57, 0.3, mission.time))
+        {
+            mission.state = obs4_fwd3;
+        }
+        break;
+
+    case obs4_fwd3:
+        if (fwd(0.7, 0.3, mission.time))
+        {
+            mission.state = obs4_turn3;
+        }
+        break;
+        
+    case obs4_turn3:
+        if (turn(-1.57, 0.3, mission.time))
+        {
+            mission.state = obs4_flw2;
+        }
+        break;
+
+
+    case obs4_flw2:
+        if (followwall(mission.time,0.2))
         {
             mission.state = obs4_end;
         }

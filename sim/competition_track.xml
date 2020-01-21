@@ -13,14 +13,14 @@
   
   <!-- Simulator configuration -->
   <simstage>
-    <world wallmap="comp_wall" linemap="comp_line" scale="50"/>
+    <world wallmap="comp_wall2" linemap="comp_line2" scale="75"/>
   </simstage>
   
   <!-- Robot server no. 0 -->
   <robot>
     <mrcserver port="8000"/>
     <clients number="5"/>
-    <params name="smr0" robotpose="1.5 0.5 1.57" wheelbase="0.26" encresolution="0.00010245"/>
+    <params name="smr0" robotpose="1.5 5.5 1.57" wheelbase="0.26" encresolution="0.00010245"/>
     <irsensor ka="16.0" kb="76.0"/>
     <laserscanner port="19001" laserpose="0.26 0.0 0.0"/>
   </robot>

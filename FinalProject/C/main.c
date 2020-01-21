@@ -118,7 +118,7 @@ int main()
     printf("position: %f, %f\n", odo.left_pos, odo.right_pos);
     mot.w=odo.w;
     running=1; 
-    int statemachine=ms_obs3; 
+    int statemachine=ms_obs4; 
     
     
     /**********************************************************************************
@@ -139,12 +139,12 @@ int main()
         }  
          
         rhdSync();  
-        odo.left_enc=lenc->data[0];           
-        odo.right_enc=renc->data[0];         
-        update_odo(&odo);   
-        crossing_black_line = crossingblackline(); 
-        black_line_found = blacklinefound();
-        /****************************************\         
+        odo.left_enc=lenc->data[0];                 
+        odo.right_enc=renc->data[0];                     
+        update_odo(&odo);          
+        crossing_black_line = crossingblackline();     
+        black_line_found = blacklinefound();     
+        /****************************************\           
                       statemachine                     
         \******************* *********************/        
    
