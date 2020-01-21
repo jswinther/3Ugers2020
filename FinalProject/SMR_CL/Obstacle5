@@ -1,7 +1,7 @@
 laser "scanpush cmd='zoneobst'"
-fwd 0.2
-turn 80
-turnr 0.4 90
-fwd -0.22
+fwd 0.15
+turn 90
+fwd 0.22
 ignoreobstacles
-followline "bm" @v0.3 :($drivendist > 3)
+followline "bm" @v0.3 :($drivendist > 1.7)
+turnr 0.1 @v0.1 :($odoth > 1.57)

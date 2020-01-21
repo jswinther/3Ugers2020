@@ -10,23 +10,23 @@ stringcat $l5
 stringcat $l6
 stringcat $l7
 stringcat $l8
-fwd 0.75
-
+fwd 0.5
+wait 0.1
 
 %% Find the closest shit to black line yo
 array "L" 4
 array "l" 4
 
 
-l[0] = $l0
-l[1] = $l1
-l[2] = $l2
-l[3] = $l3
+l[0] = $l8
+l[1] = $l7
+l[2] = $l6
+l[3] = $l5
 
-L[0] = $l0*sin(1.222)
-L[1] = $l1*sin(0.873)
-L[2] = $l2*sin(0.524)
-L[3] = $l3*sin(0.175)
+L[0] = $l8*sin(1.222)
+L[1] = $l7*sin(0.873)
+L[2] = $l6*sin(0.524)
+L[3] = $l5*sin(0.175)
 
 i = 0
 n = -1
@@ -53,30 +53,32 @@ stringcat z
 
 %%gaaahfuck
 
-followline "bm" @v0.3 :($l0 <= maxDistToObject)
+followline "bm" @v0.3 :($l8 <= maxDistToObject)
 stop
+wait 0.1
 
 %% part 2 - Follow Gate
 
-a = (sin(0.349)*$l0) + 0.235*2
+a = (sin(0.349)*$l8) + 0.235*2
 
 stringcat $l1
 stringcat $l0
 
 followline "bm" @v0.3 :($drivendist > a)
+stop
+wait 0.1
+
+stringcat $l8
+stringcat $l7
 
 
-stringcat $l0
-stringcat $l1
-
-
-turn 90
+turn -90
 ignoreobstacles
-drive :($drivendist > 1.5)
+drive :($drivendist > a)
 %turn -90
 
-%stringcat $l1
-%stringcat $l0
+%stringcat $l7
+%stringcat $l8
 
 %wallDist = 0.2
 
