@@ -3,36 +3,37 @@
  */
 
 #include "include_all.h"
-#define ROBOTPORT	8000 //24902
+
 
 int main()
-{     
+{
     // Connection.
     
     // **************************************************
-    //  Establish connection to robot sensors and actuators 
+    //  Establish connection to robot sensors and actuators
     // **************************************************
     int running,arg,time=0;
+
     if (rhdConnect('w',"localhost",ROBOTPORT)!='w')
     {
         printf("Can't connlect to rhd \n");
         exit(EXIT_FAILURE); 
-    }    
-         
-    printf("connected to robot \n");    
+    } 
+        
+    printf("connected to robot \n");
 
     if ((inputtable=getSymbolTable('r'))== NULL)
     {
-        printf("Can't connect to rhd \n"); 
-        exit(EXIT_FAILURE); 
-    }  
-        
-    if ((outputtable=getSymbolTable('w'))== NULL)
-    { 
         printf("Can't connect to rhd \n");
         exit(EXIT_FAILURE); 
     }
- 
+        
+    if ((outputtable=getSymbolTable('w'))== NULL)
+    {
+        printf("Can't connect to rhd \n");
+        exit(EXIT_FAILURE); 
+    }
+
     // connect to robot I/O variables
     lenc=getinputref("encl",inputtable);
     renc=getinputref("encr",inputtable);
@@ -75,13 +76,13 @@ int main()
         xmldata=xml_in_init(4096,32);
         printf(" camera server xml initialized \n");
     }   
-     
+    
     // **************************************************
     //  LMS server code initialization
     //
     
     
- 
+
 
     /* Create endpoint */
     lmssrv.config=1;
@@ -96,124 +97,110 @@ int main()
             fprintf(stderr," Can not make  socket\n");
             exit(errno);
         }
-    
-        serverconnect(&lmssrv);  
+
+        serverconnect(&lmssrv);
         if (lmssrv.connected){
             xmllaser=xml_in_init(4096,32);
             printf(" laserserver xml initialized \n");
-            len=sprintf(buf,"scanpush cmd='zoneobst'\n"); 
+            len=sprintf(buf,"scanpush cmd='zoneobst'\n");
             send(lmssrv.sockfd,buf,len,0);
-        } 
-    }    
-         
+        }
+    }   
+        
         
     /* Read sensors and zero our position.  */
     rhdSync();
-    odo.w=0.256; 
-    odo.cr=DELTA_M; 
+    odo.w=0.256;
+    odo.cr=DELTA_M;
     odo.cl=odo.cr;
     odo.left_enc=lenc->data[0];
-    odo.right_enc=renc->data[0]; 
+    odo.right_enc=renc->data[0];
     reset_odo(&odo);
     printf("position: %f, %f\n", odo.left_pos, odo.right_pos);
     mot.w=odo.w;
     running=1; 
-    int statemachine=ms_obs1; 
+    mission.state=ms_obs1;
+    mission.oldstate=-1; 
     
     
     /**********************************************************************************
      *                                 MAIN LOOP START
      **********************************************************************************/
-    while (running) 
-    {   
-        if (lmssrv.config && lmssrv.status && lmssrv.connected) 
+    while (running)
+    { 
+        if (lmssrv.config && lmssrv.status && lmssrv.connected)
         {
             while ( (xml_in_fd(xmllaser,lmssrv.sockfd) >0))
                 xml_proca(xmllaser);
         }
         
         if (camsrv.config && camsrv.status && camsrv.connected)
-        {    
+        {
             while ( (xml_in_fd(xmldata,camsrv.sockfd) >0))
                 xml_proc(xmldata);
-        }  
-         
-        rhdSync();  
-        odo.left_enc=lenc->data[0];                 
-        odo.right_enc=renc->data[0];                     
-        update_odo(&odo);          
-        crossing_black_line = crossingblackline();     
-        black_line_found = blacklinefound();     
-        /****************************************\           
-                      statemachine                     
-        \******************* *********************/        
-   
-        switch (statemachine) {                           
-            case ms_obs1:           
-                if(run_obstacle_1() == 1)
-                { 
-                    statemachine = ms_obs2;
-                    puts("Obstacle 1 is done.");
-                } 
-                break;   
-            case ms_obs2:  
-                if(run_obstacle_2() == 1)
-                {
-                    statemachine = ms_end;//ms_obs3;           
-                    puts("Obstacle 2 is done");
-                }
-                break; 
-            case ms_obs3:   
-                if(run_obstacle_3() == 1) 
-                {
-                    statemachine = ms_obs4;           
-                    puts("Obstacle 3 is done");
-                }
+        }
+        
+        rhdSync();
+        odo.left_enc=lenc->data[0];
+        odo.right_enc=renc->data[0];
+        update_odo(&odo);
+        
+        /****************************************
+        / mission statemachine   
+        */
+        sm_update(&mission);
+        switch (mission.state) {
+            
+            case ms_obs1:
+                followline(0.3, 'l');
+                
+                
+                //if(run_obstacle_1() == 1) mission.state = ms_obs2;
+                //printf("Obs %d\n", mission.state);
                 break;
-            case ms_obs4: 
-                if(run_obstacle_4() == 1)
-                {
-                    statemachine = ms_obs5;           
-                    puts("Obstacle 4 is done");
-                }
-                break; 
+            case ms_obs2:
+                if(run_obstacle_2() == 1) mission.state = ms_obs3;
+                printf("Obs %d\n", mission.state);
+                break;
+            case ms_obs3:
+                if(run_obstacle_3() == 1) mission.state = ms_obs4;
+                printf("Obs %d\n", mission.state);
+                break;
+            case ms_obs4:
+                if(run_obstacle_4() == 1) mission.state = ms_obs5;
+                printf("Obs %d\n", mission.state);
+                break;
             case ms_obs5:
-                if(run_obstacle_5() == 1) 
-                {
-                    statemachine = ms_obs6;           
-                    puts("Obstacle 5 is done");
-                }
-                break; 
+                if(run_obstacle_5() == 1) mission.state = ms_obs6;
+                printf("Obs %d\n", mission.state);
+                break;
             case ms_obs6:
-                if(run_obstacle_6() == 1) 
-                {
-                    statemachine = ms_end;           
-                    puts("Obstacle 6 is done");
-                }
+                if(run_obstacle_6() == 1) mission.state = ms_end;
+                printf("Obs %d\n", mission.state);
                 break;                
-            case ms_end: 
+            case ms_end:
                 mot.cmd=mot_stop;
                 running=0;
                 break;
-        }    
-        /*  end of mission  */ 
+        }  
+        /*  end of mission  */
         
         mot.left_pos=odo.left_pos;
         mot.right_pos=odo.right_pos;
         update_motcon(&mot);
-        speedl->data[0]=100*mot.motorspeed_l; 
+        speedl->data[0]=100*mot.motorspeed_l;
         speedl->updated=1;
         speedr->data[0]=100*mot.motorspeed_r;
         speedr->updated=1;
- 
+
         // 100 Hz clock, which means this is true once every 1 second.
         if (time  % 100 == 0)
         //    printf(" laser %f \n",laserpar[3]);
         time++;
         /* stop if keyboard is activated
         *
-        */ 
-        ioctl(0, FIONREAD, &arg); 
+        */
+        ioctl(0, FIONREAD, &arg);
         if (arg!=0)  running=0;
     }
     /**********************************************************************************
@@ -228,4 +215,4 @@ int main()
     rhdSync();
     rhdDisconnect();
     exit(0);
-}  
+}

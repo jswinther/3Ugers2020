@@ -3,11 +3,10 @@
  */
 
 #include "include_all.h"
-#define ROBOTPORT	8000 //24902
 
-int main()
+int main() 
 {     
-    // Connection.
+    // Connection.  
     
     // **************************************************
     //  Establish connection to robot sensors and actuators 
@@ -16,9 +15,9 @@ int main()
     if (rhdConnect('w',"localhost",ROBOTPORT)!='w')
     {
         printf("Can't connlect to rhd \n");
-        exit(EXIT_FAILURE); 
-    }    
-         
+        exit(EXIT_FAILURE);  
+    }     
+           
     printf("connected to robot \n");    
 
     if ((inputtable=getSymbolTable('r'))== NULL)
@@ -151,7 +150,7 @@ int main()
         switch (statemachine) {                           
             case ms_obs1:           
                 if(run_obstacle_1() == 1)
-                { 
+                {
                     statemachine = ms_obs2;
                     puts("Obstacle 1 is done.");
                 } 
