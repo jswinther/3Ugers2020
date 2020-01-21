@@ -43,12 +43,14 @@ int run_obstacle_2() {
     switch(mission.state) 
     {
         case obs2_fl:
-            if(fl(end_dist, 0.7, 0, 0, 0.3, mission.time, 'l')) 
+            //printf("obs2_fl\n");
+            if(fl(end_dist, 2, 0, 0, 0.3, mission.time, 'l')) 
             {
                 mission.state = obs2_fm1;
             }
 	        break;
         case obs2_fm1:
+            //printf("obs2_fm1\n");
             if (fl(end_cross, 20, 0, 0, 0.6, mission.time, 'm'))
             {   
                 mission.state = obs2_fwd1;
@@ -105,7 +107,7 @@ int run_obstacle_2() {
             }
             break;
         case obs2_fl_cross_2:
-            if(fl(end_cross, 20, 0, 0, 0.6, mission.time, 'r'))
+            if(fl(end_cross, 20, 0, 0, 0.6, mission.time, 'm'))
             {
                 mission.state = obs2_end;
             }

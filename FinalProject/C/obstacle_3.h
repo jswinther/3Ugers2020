@@ -41,15 +41,15 @@ int run_obstacle_3() {
     switch(mission.state) 
     {
         case obs3_fwd:
-            if(fwd(0.5, 0.6, mission.time))
+            if(fwd(0.2, 0.6, mission.time))
             {
                 mission.state = obs3_fl_laser;
             }
             break;
         case obs3_fl_laser:
-            if(fl(end_ir, 20, 0, 1.5, 0.6, mission.time, 'm'))
+            if(fl(end_ir, 20, 8, 2, 0.6, mission.time, 'm'))
             {
-                obs3_dist = laserpar[0]*sin(40) + 0.05;
+                obs3_dist = laserpar[8]*sin(20);
                 mission.state = obs3_fl_dist;
             }
             break;
@@ -60,13 +60,13 @@ int run_obstacle_3() {
             }
             break;
         case obs3_turn:
-            if(turn(1.57, 0.3, mission.time))
+            if(turn(-1.57, 0.3, mission.time))
             {
                 mission.state = obs3_drive_through_gate;
             }
             break;
         case obs3_drive_through_gate:
-            if(fwd(1.5, 0.3, mission.time))
+            if(fwd(0.5, 0.3, mission.time))
             {
                 mission.state = obs3_end;
             }

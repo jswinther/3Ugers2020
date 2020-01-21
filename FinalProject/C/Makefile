@@ -20,6 +20,8 @@ all:	${PROG}
 ${PROG}: ${OBJS}
 	${LD} -o ${@} ${LDFLAGS} ${OBJS} ${LIBS}
 
+.PHONY: main
+
 main: main.o serverif.o
 	${LD} -o ${@} ${LDFLAGS} main.o serverif.o ${LIBS}
 
@@ -28,5 +30,7 @@ test: test.o serverif.o
 
 clean:
 	rm -f ${OBJS}
+
+
 
 ${OBJS}: ${HDRS} Makefile

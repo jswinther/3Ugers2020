@@ -23,6 +23,16 @@
 
 #include "definitions.h"
 double Speed = 0.0;
+/* Real World
+double linesensor_black[] = {52.5, 	52, 	57, 	55.5, 	55, 	54, 	56, 	57};
+double linesensor_white[] = {82, 	88, 	94, 	95, 	93, 	86, 	90, 	85};
+*/
+
+/* Simulation */
+double linesensor_black[] = {0,0,0,0,0,0,0,0};
+double linesensor_white[] = {128,128,128,128,128,128,128,128};
+
+
 
 enum
 {
@@ -33,7 +43,6 @@ enum
 	mot_followwall,
 	mot_turnr,
 	mot_drive
-
 };
 
 // Obstacles.

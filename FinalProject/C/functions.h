@@ -448,8 +448,8 @@ void update_motcon(motiontype *p)
 		{ // if (current angel < requested)
 			if ((odo.current_theta * p->w) < (((odo.old_theta + p->angle) * p->w)))
 			{
-				printf("\nRIGHT RR requested angle= %f",p->angle);
-				printf("\nRIGHT RR current angle= %f",fabs(odo.current_theta - odo.old_theta));
+				//printf("\nRIGHT RR requested angle= %f",p->angle);
+				//printf("\nRIGHT RR current angle= %f",fabs(odo.current_theta - odo.old_theta));
 
 				// Theta is distant left - theta = requested angle - current angle
 				theta = (p->angle * p->w) - (fabs(odo.current_theta - odo.old_theta) * p->w);
@@ -473,9 +473,9 @@ void update_motcon(motiontype *p)
 			}
 			else
 			{
-				printf("\ntheta Pos: %f   old theta:  %f0", odo.current_theta, odo.old_theta);
-				printf("\ntheta ref: %f   theta:  %f0", odo.reference_theta, odo.current_theta);
-				printf("\n if : %f < %f",(fabs(odo.current_theta - odo.old_theta) * p->w),((p->angle+odo.current_theta) * p->w));
+				//printf("\ntheta Pos: %f   old theta:  %f0", odo.current_theta, odo.old_theta);
+				//printf("\ntheta ref: %f   theta:  %f0", odo.reference_theta, odo.current_theta);
+				//printf("\n if : %f < %f",(fabs(odo.current_theta - odo.old_theta) * p->w),((p->angle+odo.current_theta) * p->w));
 				//printf("\nMot_turnr DONE");
 				p->motorspeed_r = 0;
 				p->motorspeed_l = 0;
@@ -554,7 +554,7 @@ void update_motcon(motiontype *p)
 			break;
 		}
 
-		printf("\nlaser 4: %f",laserpar[4]);
+		//printf("\nlaser 4: %f",laserpar[4]);
 		p->motorspeed_l = p->speedcmd;
 		p->motorspeed_r = p->speedcmd;
 
@@ -584,10 +584,17 @@ void sm_update(smtype *p)
 
 void lineSens_calib()
 {
+	//printf("\n[");
 	for (int i = 0; i < 8; i++)
 	{
-		ls_calib[i] = (linesensor->data[i] - lineBlack) / (lineWhite - lineBlack);
+		ls_calib[i] = (linesensor->data[i] - linesensor_black[i]) / (linesensor_white[i] - linesensor_black[i]);
+		//printf(" %f",ls_calib[i]);
+		/*if(ls_calib[i] < 0.2)
+			//printf("*");
+		else 
+			//printf(" ");*/
 	}
+	//printf("]");
 }
 
 int lineSens_min()

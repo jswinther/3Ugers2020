@@ -3,8 +3,7 @@
  */
 
 #include "include_all.h"
-#define ROBOTPORT	8000 //24902
-
+  
 int main()
 {     
     // Connection.
@@ -15,7 +14,7 @@ int main()
     int running,arg,time=0;
     if (rhdConnect('w',"localhost",ROBOTPORT)!='w')
     {
-        printf("Can't connlect to rhd \n");
+        printf("Can't connect to rhd \n"); 
         exit(EXIT_FAILURE); 
     }    
          
@@ -59,7 +58,7 @@ int main()
     strcpy(camsrv.name,"cameraserver");
     camsrv.status=1;
 
-    if (camsrv.config) 
+    if (camsrv.config)  
     {
         int errno = 0; 
         camsrv.sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -124,7 +123,7 @@ int main()
     /**********************************************************************************
      *                                 MAIN LOOP START
      **********************************************************************************/
-    while (running) 
+    while (running)   
     {   
         if (lmssrv.config && lmssrv.status && lmssrv.connected) 
         {
@@ -147,34 +146,38 @@ int main()
         /****************************************\           
                       statemachine                     
         \******************* *********************/        
-   
+    
         switch (statemachine) {                           
-            case ms_obs1:           
-                if(run_obstacle_1() == 1)
+            case ms_obs1:            
+                if(run_obstacle_1() == 1) 
                 { 
                     statemachine = ms_obs2;
-                    puts("Obstacle 1 is done.");
-                } 
+    
+                    puts("Obstacle 1 is done.");   
+                }  
                 break;   
             case ms_obs2:  
-                if(run_obstacle_2() == 1)
+                if(run_obstacle_2() == 1) 
                 {
-                    statemachine = ms_end;//ms_obs3;           
-                    puts("Obstacle 2 is done");
+                    statemachine = ms_obs3;      
+                    //statemachine = ms_end;      
+                    puts("Obstacle 2 is done"); 
                 }
                 break; 
-            case ms_obs3:   
-                if(run_obstacle_3() == 1) 
-                {
-                    statemachine = ms_obs4;           
+            case ms_obs3:    
+                if(run_obstacle_3() == 1)  
+                { 
+                    statemachine = ms_obs4;    
+                    //statemachine = ms_end;           
                     puts("Obstacle 3 is done");
                 }
-                break;
+                break;  
             case ms_obs4: 
                 if(run_obstacle_4() == 1)
                 {
-                    statemachine = ms_obs5;           
-                    puts("Obstacle 4 is done");
+                    statemachine = ms_obs5;   
+                    statemachine = ms_end;                 
+                    puts("Obstacle 4 is done"); 
                 }
                 break; 
             case ms_obs5:
