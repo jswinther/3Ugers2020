@@ -10,7 +10,8 @@ stringcat $l5
 stringcat $l6
 stringcat $l7
 stringcat $l8
-%followline "bm" @v0.3 :($drivendist > 0.3)
+fwd 0.1
+followline "bm" @v0.3 :($l4 < 2 | $l3 < 2)
 
 %% Find the closest shit to black line yo
 array "L" 4
@@ -52,7 +53,8 @@ stringcat z
 
 %%gaaahfuck
 
-followline "bm" @v0.3 :($l0 <= maxDistToWall)
+followline "bm" @v0.3 :($l0 <= z)
+stringcat $l0
 stop
 
 %% part 2 - Follow Gate
@@ -72,11 +74,16 @@ a = 0
 n = 0
 label "addUp"
 wait 0.001
-l0=$l0 :($l0 < maxDistToWall+0.1)
+l0=$l0 :($l0 < z+0.6 | $l0 > 0)
+stop
 a = a + (cos(0.349)*l0)
+stop
 n = n + 1
-if (n < 100) "addUp"
-a = a/100
+stop
+if (n < 1) "addUp"
+stringcat n
+stringcat a
+a = a/1
 stringcat a
 
 driveDist=(tan(0.349)*a) + 0.235

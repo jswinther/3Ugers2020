@@ -72,7 +72,7 @@ stringcat $l1
 
 turn 90
 ignoreobstacles
-drive :($drivendist > 0.5)
+drive :($drivendist > 1.5)
 %turn -90
 
 %stringcat $l1

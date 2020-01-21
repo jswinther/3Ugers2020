@@ -1,0 +1,20 @@
+laser "scanpush cmd='zoneobst'"
+stringcat $l0 $l2 $l3 
+wait 1
+stringcat $l0 $l2 $l3 
+fwd 0.2
+
+
+
+followline "bm" :($l0<1)
+
+
+
+x=cos(1.22)*$l0+0.3
+fwd x
+stop
+DistWall=$l0-0.4
+turn 90
+ignoreobstacles
+drive @v 0.3 :($drivendist>1)
+stop

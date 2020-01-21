@@ -1,6 +1,3 @@
-
-ignoreobstacles
-
 laser "scanpush cmd='zoneobst'"
 startx = $odox
 starty = $odoy
@@ -32,5 +29,34 @@ fwd 0.2
 stop
 turn 90
 ignoreobstacles
-followline "bm"
+followline "bm" :($crossingblackline==1)
+stop
+fwd 0.2
+stop
+followline "br" :($crossingblackline)
+stop
+followline "bm" :($l0<1)
+stringcat $l0
+stop
+wait 3
+x=cos(1.22)*$l0+0.3
+fwd x
+stop
+DistWall=$l0-0.4
+turn 90
+ignoreobstacles
+drive @v 0.3 :($drivendist>DistWall)
+stop
+ignoreobstacles
+turn -90
+ignoreobstacles
+followwall "l" 0.4 :($l0>0.5)
+ignoreobstacles
+stop
+ignoreobstacles
+turnr 0.43 100
+
+
+
+
 
