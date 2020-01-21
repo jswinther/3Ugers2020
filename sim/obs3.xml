@@ -13,7 +13,7 @@
   
   <!-- Simulator configuration -->
   <simstage>
-    <world wallmap="comp_wall" linemap="comp_line" scale="50"/>
+    <world wallmap="comp_wall2" linemap="comp_line2" scale="50"/>
   </simstage>
   
   <!-- Robot server no. 0 -->
