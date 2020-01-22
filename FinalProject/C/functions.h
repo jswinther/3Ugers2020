@@ -46,7 +46,6 @@ int followwall(/*char side,*/ int time, double speed);
 /**
  * Debug
  **/
-int counter = 0;
 int numTurn = 0;
 
 /**********************************************************************
@@ -243,7 +242,6 @@ void update_motcon(motiontype *p)
 			}
 			break;
 		case end_cross:
-
 			if (crossing_black_line == 1)
 			{
 				p->finished = 1;
@@ -261,8 +259,6 @@ void update_motcon(motiontype *p)
 				p->motorspeed_r = 0;
 			}
 			break;
-		default:
-			break;
 		}
 
 		if (p->finished != 1)
@@ -270,12 +266,6 @@ void update_motcon(motiontype *p)
 			d = fabs(p->dist) - (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
 			v_max = sqrt(2 * 0.5 * d);
 
-			/*
-				if (ls == 3 || ls == 4)
-					delta_v = 0;
-				else
-					delta_v = 0.2*(3.5-ls);
-					*/
 			delta_v = 0;
 			switch (mot.direction)
 			{
@@ -283,10 +273,10 @@ void update_motcon(motiontype *p)
 				delta_v = K_LINE * (3.5 - centerMass('b'));
 				break;
 			case 'l':
-				delta_v = K_LINE * (1.5 - centerMass('b'));
+				delta_v = K_LINE * (2.5 - centerMass('b'));
 				break;
 			case 'r':
-				delta_v = K_LINE * (5.5 - centerMass('b'));
+				delta_v = K_LINE * (4.5 - centerMass('b'));
 				break;
 			}
 			//printf("\ncenter of mass: %f",centerMass('b'));
@@ -304,8 +294,16 @@ void update_motcon(motiontype *p)
 			}
 			else
 			{
-				if (Speed >= 0.005)
+				if (Speed <= 0.000)
+				{
+					p->finished;
+					p->motorspeed_l = p->motorspeed_r = 0;
+					return
+				}
+				else
+				{
 					Speed -= 0.005;
+				}
 				//	printf("\nspeed-");
 			}
 			//printf("Speed: %f",Speed);
@@ -313,7 +311,6 @@ void update_motcon(motiontype *p)
 			p->motorspeed_l = Speed + delta_v;
 			p->motorspeed_r = Speed - delta_v;
 			//printf("deltav %f, left ms %f, right ms %f, counter %d\n", delta_v, p->motorspeed_l, p->motorspeed_r, counter);
-			++counter;
 		}
 		break;
 
