@@ -3,11 +3,10 @@
  */
 
 #include "include_all.h"
-#define ROBOTPORT	8000 //24902
 
-int main()
+int main() 
 {     
-    // Connection.
+    // Connection. 
     
     // **************************************************
     //  Establish connection to robot sensors and actuators 

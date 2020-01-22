@@ -296,9 +296,9 @@ void update_motcon(motiontype *p)
 			{
 				if (Speed <= 0.000)
 				{
-					p->finished;
+					p->finished = 1;
 					p->motorspeed_l = p->motorspeed_r = 0;
-					return
+					return;
 				}
 				else
 				{
@@ -581,7 +581,7 @@ void lineSens_calib()
 {
 	for (int i = 0; i < 8; i++)
 	{
-		ls_calib[i] = (linesensor->data[i] - lineBlack) / (lineWhite - lineBlack);
+		ls_calib[i] = (linesensor->data[i] - ls_b[i]) / (ls_w[i] - ls_b[i]);
 	}
 }
 
