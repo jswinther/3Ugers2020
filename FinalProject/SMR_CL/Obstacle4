@@ -8,7 +8,6 @@ stringcat $l3
 stringcat $l4
 
 ignoreobstacles
-drive :($l4 < 0.3)
 turn -90
 
 stringcat $l1
