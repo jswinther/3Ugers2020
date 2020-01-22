@@ -112,9 +112,7 @@ void update_motcon(motiontype *p)
 	double d;
 	double v_max;
 	double delta_v;
-	double k = 0.5;
 	int ls, z;
-	double k_l = 0.2;
 
 	if (p->cmd != 0)
 	{
@@ -190,7 +188,7 @@ void update_motcon(motiontype *p)
 			d = fabs(p->dist) - z * (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos));
 			//printf("\nd = %f - %f = %f", fabs(p->dist), z * (fabs(p->right_pos + p->left_pos) / 2 - fabs(p->startpos)), d);
 			v_max = sqrt(fabs(2 * 0.5 * d)) * (d / fabs(d));
-			delta_v = k * (odo.reference_theta - odo.current_theta);
+			delta_v = K_MOVE * (odo.reference_theta - odo.current_theta);
 
 			if (fabs(Speed) <= v_max)
 			{
@@ -282,13 +280,13 @@ void update_motcon(motiontype *p)
 			switch (mot.direction)
 			{
 			case 'm':
-				delta_v = k_l * (3.5 - centerMass('b'));
+				delta_v = K_LINE * (3.5 - centerMass('b'));
 				break;
 			case 'l':
-				delta_v = k_l * (1.5 - centerMass('b'));
+				delta_v = K_LINE * (1.5 - centerMass('b'));
 				break;
 			case 'r':
-				delta_v = k_l * (5.5 - centerMass('b'));
+				delta_v = K_LINE * (5.5 - centerMass('b'));
 				break;
 			}
 			//printf("\ncenter of mass: %f",centerMass('b'));

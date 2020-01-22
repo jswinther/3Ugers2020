@@ -1,6 +1,7 @@
 #include "math.h"
 
-
+#ifndef DEFINITIONS
+#define DEFINITIONS
 /**
  * Forward and Turn speed.
  **/
@@ -10,19 +11,21 @@
 /**
  * Simulation = 0, Real World = 1
  **/
-#define ROBOT 1
+#define ROBOT 0
 
 #if ROBOT
-    #define ROBOTPORT 24902 
+    #define ROBOTPORT 24902
+    #define K_MOVE 0.5
+    #define K_LINE 0.2
+    double ls_b[] = {50,    50,     50,     50,     50,     50,     50,     50 }; // Black Tape
+    double ls_w[] = {90,    90,     90,     90,     90,     90,     90,     90 }; // White Tape
 #else
     #define ROBOTPORT 8000
+    #define K_MOVE 0.5
+    #define K_LINE 0.2
+    double ls_b[] = {0,     0,      0,      0,      0,      0,      0,      0  };
+    double ls_w[] = {128,   128,    128,    128,    128,    128,    128,    128};
 #endif
-
-
-/**
- * 8000 = Simulation, 24902 = Robot
- **/
-
 
 /**
  * Robot specific measurements.
@@ -34,16 +37,4 @@
 #define ROBOT_HEIGHT 0.43
 
 #define DELTA_M (M_PI * WHEEL_DIAMETER / 2000)
-/**
- * The raw value from linesensors on concrete floor.
- * Choose the lowest measured value
- * The raw value from linesenors on black tape
- * Choose the highest measured value
- **/
-
-//real World
-//#define lineBlack 43-3      //43
-//#define lineWhite 74+3      //74
-// Simulation
-#define lineBlack 0
-#define lineWhite 128
+#endif

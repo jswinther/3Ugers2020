@@ -157,14 +157,4 @@ smtype mission1;
  **********************************************************/
 int crossing_black_line = 0;
 int black_line_found = 0;
-
-
-
-
-
-
-
-
-
-
 #endif
