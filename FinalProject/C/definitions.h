@@ -8,9 +8,21 @@
 #define DEF_TURN 0.3
 
 /**
+ * Simulation = 0, Real World = 1
+ **/
+#define ROBOT 1
+
+#if ROBOT
+    #define ROBOTPORT 24902 
+#else
+    #define ROBOTPORT 8000
+#endif
+
+
+/**
  * 8000 = Simulation, 24902 = Robot
  **/
-#define ROBOTPORT	8000 //24902 
+
 
 /**
  * Robot specific measurements.
